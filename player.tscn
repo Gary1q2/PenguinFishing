@@ -1,12 +1,13 @@
-[gd_scene load_steps=14 format=3 uid="uid://t8souq7rp5b0"]
+[gd_scene load_steps=15 format=3 uid="uid://t8souq7rp5b0"]
 
-[ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_i3pqv"]
-[ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://FishingRod.gd" id="2_1jxqw"]
-[ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="3_hqtel"]
-[ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="4_hqtel"]
-[ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="5_sweqy"]
-[ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://goldfish.png" id="6_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_5ncpa"]
+[ext_resource type="Script" uid="uid://xquxn635vn76" path="res://FishingController.gd" id="2_wi0c6"]
+[ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://player.gd" id="3_hp6x6"]
+[ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="4_3tkgg"]
+[ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://FishingRod.gd" id="5_l6ohk"]
+[ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="6_oudfo"]
+[ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="7_d6rpx"]
+[ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://goldfish.png" id="8_r3kul"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
 size = Vector2(50, 72)
@@ -30,13 +31,20 @@ size = Vector2(566.75, 403)
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="Background" type="Sprite2D" parent="."]
-texture = ExtResource("1_i3pqv")
+texture = ExtResource("1_5ncpa")
+
+[node name="FishingController" type="Node2D" parent="."]
+script = ExtResource("2_wi0c6")
+
+[node name="FishingSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("7_d6rpx")
 
 [node name="Player" type="CharacterBody2D" parent="."]
-script = ExtResource("1_onrkg")
+script = ExtResource("3_hp6x6")
+fishing_con_path = NodePath("../FishingController")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
-texture = ExtResource("3_hqtel")
+texture = ExtResource("4_3tkgg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 position = Vector2(0, 8)
@@ -55,15 +63,12 @@ theme_override_font_sizes/font_size = 20
 text = "Press E to fish"
 
 [node name="FishingRod" type="Node2D" parent="."]
-script = ExtResource("2_1jxqw")
+script = ExtResource("5_l6ohk")
 player_path = NodePath("../Player")
 
 [node name="Rod" type="Sprite2D" parent="FishingRod"]
 scale = Vector2(0.7, 0.7)
-texture = ExtResource("4_hqtel")
-
-[node name="FishingSound" type="AudioStreamPlayer2D" parent="FishingRod"]
-stream = ExtResource("5_sweqy")
+texture = ExtResource("6_oudfo")
 
 [node name="FishingLine" type="Line2D" parent="."]
 width = 2.0
@@ -71,7 +76,7 @@ default_color = Color(0, 0, 0, 1)
 
 [node name="FishSprite" type="Sprite2D" parent="."]
 visible = false
-texture = ExtResource("6_2hs0m")
+texture = ExtResource("8_r3kul")
 
 [node name="Wall" type="StaticBody2D" parent="."]
 

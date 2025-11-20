@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-signal landed
+signal bait_in_water
 
 
 @export var bait_sprite_path: NodePath
@@ -53,7 +53,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 			sleeping = true
 			bait_splash.play()
 			gravity_scale = 0
-			
+			emit_signal("bait_in_water")
 			start_bob_once(10)
 			
 		else:
@@ -62,20 +62,6 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 			gravity_scale = 0
 			
 			angular_velocity = 25 * (1 if facing_right else -1)
-		
-		#sleeping = true
-		#position.y = target_y
-		#emit_signal("landed")
-		#bait_splash.play()
-		#gravity_scale = 0
-
-		#land_y = position.y
-
-		#bait_sprite.texture = load("res://float_sink.png")
-		
-		#bob_time = 0
-		
-
 
 func start_bob_once(bob_amount):
 	var duration = 0.25
@@ -83,12 +69,6 @@ func start_bob_once(bob_amount):
 	var tween = create_tween()
 	tween.tween_property(self, "position:y", bob_amount, duration / 2).as_relative()
 	tween.tween_property(self, "position:y", -bob_amount, duration / 2).as_relative()
-#func _physics_process(delta: float):
-#	if  (bait_state == "in_water"):
-#		bob_time += delta
-#		var offset = sin(bob_time * bob_speed) * bob_amplitude
-#		position.y = offset
-
 
 #func _on_LandArea_body_entered(body):
 #	if body == self:
@@ -96,17 +76,11 @@ func start_bob_once(bob_amount):
 
 func _on_LandArea_body_exited(body):
 	if body == self:
-		print("Left land")
-		# maybe stop rolling
-		off_land = true
-		
+		off_land = true	
 		if bait_state == "rolling":
-			linear_velocity = Vector2.ZERO
-			
+			linear_velocity = Vector2.ZERO	
 			sleeping = true
 			bait_splash.play()
 			gravity_scale = 0
+			emit_signal("bait_in_water")
 			start_bob_once(2)
-		
-		#if position.y >= target_y:
-		#	linear_velocity.x = 0

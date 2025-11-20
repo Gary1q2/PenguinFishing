@@ -1,28 +1,13 @@
 extends CharacterBody2D
 
-# --- Constants ---
 const MOVE_SPEED = 300
 
-# --- State variables ---
 var input: Vector2
-var state = "idle"
-var is_fishing = false
-var holding_fish = false
 
-# --- Node references ---
+@export var fishing_con_path: NodePath
 
 @onready var sprite: Sprite2D = $Sprite2D
-
-@onready var fish_sprite: Sprite2D = $FishSprite
-@onready var bait_scene: PackedScene
-
-@onready var fishing_rod = get_parent().get_node("FishingRod")
-
-
-# --- Ready callback ---
-func _ready():
-	fishing_rod.visible = false
-	#fish_sprite.visible = false
+@onready var fishing_con = get_node(fishing_con_path)
 
 # --- Input handling ---
 func get_input() -> Vector2:
@@ -46,15 +31,10 @@ func _physics_process(delta):
 
 	# Start fishing input
 	if Input.is_action_just_pressed("action"):
-		if !is_fishing:
-			fishing_rod.visible = true
-			fishing_rod.cast_rod()
-			is_fishing = true
+		if !fishing_con.is_fishing:
+			fishing_con.cast_rod()
 		else:
-			fishing_rod.visible = false
-			fishing_rod.reel_rod()
-			is_fishing = false
-			
+			fishing_con.reel_rod()
 
 #func show_fish():
 #	holding_fish = true
