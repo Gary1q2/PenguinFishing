@@ -1,41 +1,91 @@
 extends Node2D
 
-var state = "idle";
-var is_fishing = false;
-var holding_fish = false;
-var bait: RigidBody2D = null;
+var state = "uncast" # uncast, cast, fish_biting, fish_on
+var is_fishing
+var holding_fish = false
+var bait: RigidBody2D = null
 
-var fishing_timer: Timer;
+var fishing_timer: Timer
+var set_hook_timer: Timer
+var fish_fight_timer: Timer
+
+var hold_progress = 0
+var fish_escape_time = 10
+var is_holding = false
+
+
 
 @onready var rod_cast_sound: AudioStreamPlayer2D = $FishingSound
+@onready var reel_rod_sound: AudioStreamPlayer2D = $ReelRodSound
 
+@onready var alert: Sprite2D = get_node("Alert")
 @onready var rod_sprite: Sprite2D = get_parent().get_node("FishingRod/Rod")
 
 @onready var fishing_line: Line2D = get_parent().get_node("FishingLine")
+@onready var player: CharacterBody2D = get_parent().get_node("Player")
 
-@onready var fish_sprite: Sprite2D = $FishSprite
+@onready var fish_sprite: Sprite2D = get_parent().get_node("FishSprite")
 @onready var bait_scene: PackedScene
 
 @onready var fishing_rod = get_parent().get_node("FishingRod")
 
+@onready var fish_timer_label: Label = $FishFightTimer
+@onready var fish_escape_label: Label = $FishEscapeTimer
 
 
 # --- Ready callback ---
 func _ready():
+	is_fishing = state != "uncast"
+	alert.visible = false
 	fishing_rod.visible = false
-	#fish_sprite.visible = false
+	fish_sprite.visible = false
+	
+	fish_timer_label.text = "lala"
+	fish_timer_label.visible = false
+	fish_timer_label.global_position = Vector2(100, 100)
+	fish_escape_label.text = "lala"
+	fish_escape_label.visible = false
+	fish_escape_label.global_position = Vector2(300, 100)
+	
+	
+	set_hook_timer = Timer.new()
+	set_hook_timer.one_shot = true
+	set_hook_timer.wait_time = 5
+	set_hook_timer.connect("timeout", Callable(self, "_on_set_hook_timeout"))
+	add_child(set_hook_timer)
+	
+	fish_fight_timer = Timer.new()
+	fish_fight_timer.one_shot = true
+	fish_fight_timer.wait_time = 10.0
+	fish_fight_timer.connect("timeout", Callable(self, "_on_fish_fight_timeout"))
+	add_child(fish_fight_timer)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	is_fishing = state != "uncast"
 	update_fishing_line()
+	alert.position = Vector2(player.position.x, player.position.y - 100)
+	fish_sprite.position = Vector2(player.position.x, player.position.y)
+	
+	if state == "fish_on":
+		if is_holding:
+			hold_progress -= delta
+			
+			if (hold_progress <= 0):
+				on_fish_fight_success()
+			
+		fish_escape_time -= delta
 
 
+	fish_timer_label.text = "%.2f" % hold_progress
+	fish_escape_label.text = "%.2f" % fish_escape_time
 	
 
 func cast_rod():
+	fish_sprite.visible = false
 	fishing_rod.visible = true
-	is_fishing = true
+	state = "cast"
 	
 	var bait_scene = load("res://Bait.tscn")
 	bait = bait_scene.instantiate()
@@ -50,31 +100,13 @@ func cast_rod():
 	bait.cast(rod_sprite.global_position, !rod_sprite.flip_h, 500, rod_sprite.global_position.y)
 	rod_cast_sound.play()
 	
-	#is_fishing = true
 	fishing_line.visible = true
-	
-
-	if false:
-		
-		
-		# Random wait between 3 and 10 seconds
-		var wait_time = randf_range(3.0, 10.0)
-		print("Waiting for fish: ", wait_time)
-
-		var timer := get_tree().create_timer(wait_time)
-		await timer.timeout
-
-		# If player moved or cancelled before timer finished
-		#if not is_fishing:
-		#	print("Fishing cancelled")
-		#	return
-
-		# Fish caught
-		#show_fish()
 	
 func reel_rod():
 	fishing_rod.visible = false
-	is_fishing = false	
+	state = "uncast"
+	bait.stop_bobbing()
+	stop_reel_rod_sound()
 	
 	fishing_line.visible = false
 	
@@ -95,23 +127,75 @@ func _on_bait_in_water():
 	start_fishing_cycle()
 	
 func start_fishing_cycle():
-	if !is_fishing:
+	if state != "cast":
 		return
 	
-	while is_fishing:
+	while state == "cast":
+		print("Start fish cycle")
 		await get_tree().create_timer(3.0).timeout
 		
-		if !is_fishing:
-			print("fishing stopped")
+		if state != "cast":
 			return
 			
 		var roll = randf()
-		print("fishing roll: ", roll)
+		print("Fishing roll: ", roll)
 		
-		if roll < 0.5:
-			print("FISHONNNN")
+		if roll < 1:
+			print("FISH BITING!!!")
+			alert.visible = true
+			state = "fish_biting"
+			set_hook_timer.start()
+			bait.start_bobbing()
+			
 			return
 		else:
 			print("nothing yet .. wait again")
 		
+
+func set_hook():
+	if state != "fish_biting":
+		return
+	print("HOOK SET BOIZ")
+	alert.visible = false
+	set_hook_timer.stop()
+	state = "fish_on"
+	fish_escape_time = 10
+	fish_timer_label.visible = true
+	fish_escape_label.visible = true
+	on_set_hook_success()	
 	
+func on_set_hook_success():
+	print("mini game start")
+	state = "fish_on"
+	fishing_rod.start_shaking()
+	
+	hold_progress = 5
+	is_holding = false
+	
+	fish_fight_timer.start()
+	
+func _on_set_hook_timeout():
+	if state == "fish_biting":
+		print("too slow rip")
+		alert.visible = false
+		state = "cast"
+		start_fishing_cycle()
+		bait.stop_bobbing()
+
+func on_fish_fight_success():
+	print("U GOT DA FISH NIGGA")
+	fish_fight_timer.stop()
+	reel_rod()
+	fishing_rod.stop_shaking()
+	fish_sprite.visible = true
+
+func _on_fish_fight_timeout():
+	print("Fish ran away")
+	fishing_rod.stop_shaking()
+	reel_rod()
+
+func start_reel_rod_sound():
+	reel_rod_sound.play()
+	
+func stop_reel_rod_sound():
+	reel_rod_sound.stop()

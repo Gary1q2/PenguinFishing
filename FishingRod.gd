@@ -5,6 +5,15 @@ extends Node2D
 
 @onready var rod_sprite: Sprite2D = $Rod
 
+var shaking = false
+
+var shake_amount = 0.2
+var shake_speed = 20
+var shake_timer = 0
+
+func _draw():
+	draw_circle(Vector2.ZERO, 4, Color.RED)
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -13,4 +22,17 @@ func _process(delta: float) -> void:
 	
 	rod_sprite.flip_h = is_facing_left
 	
-	position = Vector2((player.position.x - 55) if is_facing_left else (player.position.x + 55), player.position.y )
+	var flip_x_offset = rod_sprite.texture.get_width() * rod_sprite.scale.x + rod_sprite.offset.x
+	position = Vector2((player.position.x - flip_x_offset) if is_facing_left else (player.position.x), player.position.y )
+
+	if shaking:
+		shake_timer += delta * shake_speed
+		rod_sprite.rotation = sin(shake_timer) * shake_amount
+
+
+func start_shaking():
+	shaking = true
+	shake_timer = 0
+	
+func stop_shaking():
+	shaking = false

@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://t8souq7rp5b0"]
+[gd_scene load_steps=17 format=3 uid="uid://t8souq7rp5b0"]
 
 [ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_5ncpa"]
 [ext_resource type="Script" uid="uid://xquxn635vn76" path="res://FishingController.gd" id="2_wi0c6"]
-[ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://player.gd" id="3_hp6x6"]
+[ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://reel-rod.ogg" id="3_3tkgg"]
+[ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://Player.gd" id="3_hp6x6"]
 [ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="4_3tkgg"]
+[ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="4_wi0c6"]
 [ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://FishingRod.gd" id="5_l6ohk"]
 [ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="6_oudfo"]
 [ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="7_d6rpx"]
@@ -36,8 +38,25 @@ texture = ExtResource("1_5ncpa")
 [node name="FishingController" type="Node2D" parent="."]
 script = ExtResource("2_wi0c6")
 
+[node name="ReelRodSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("3_3tkgg")
+parameters/looping = true
+
 [node name="FishingSound" type="AudioStreamPlayer2D" parent="FishingController"]
 stream = ExtResource("7_d6rpx")
+
+[node name="Alert" type="Sprite2D" parent="FishingController"]
+texture = ExtResource("4_wi0c6")
+
+[node name="FishEscapeTimer" type="Label" parent="FishingController"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
+
+[node name="FishFightTimer" type="Label" parent="FishingController"]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 22
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("3_hp6x6")
@@ -69,6 +88,8 @@ player_path = NodePath("../Player")
 [node name="Rod" type="Sprite2D" parent="FishingRod"]
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("6_oudfo")
+centered = false
+offset = Vector2(-15, -125)
 
 [node name="FishingLine" type="Line2D" parent="."]
 width = 2.0

@@ -31,10 +31,22 @@ func _physics_process(delta):
 
 	# Start fishing input
 	if Input.is_action_just_pressed("action"):
-		if !fishing_con.is_fishing:
+		if fishing_con.state == "uncast":
 			fishing_con.cast_rod()
-		else:
+		elif fishing_con.state == "cast":
 			fishing_con.reel_rod()
+		elif fishing_con.state == "fish_biting":
+			fishing_con.set_hook()
+		elif fishing_con.state == "fish_on":
+			print("HOLDING E to REEL FISH")
+			fishing_con.is_holding = true
+			fishing_con.start_reel_rod_sound()
+	
+	if Input.is_action_just_released("action"):
+		if (fishing_con.state == "fish_on"):
+			print("RELEASED E not reeling now")
+			fishing_con.is_holding = false
+			fishing_con.stop_reel_rod_sound()
 
 #func show_fish():
 #	holding_fish = true

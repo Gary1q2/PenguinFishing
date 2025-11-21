@@ -20,6 +20,11 @@ var bob_time = 0.0
 @onready var bait_splash = $BaitSplash
 @onready var bait_sprite = get_node(bait_sprite_path)
 
+func _process(delta):
+	if bait_state == "bobbing":
+		bob_time += delta * bob_speed
+		position.y = land_y + sin(bob_time) * bob_amplitude
+
 # Call this when casting
 func cast(start_position: Vector2, facing_right: bool, speed: float, player_y: float):
 	#bait_sprite.texture = load("res://float.png")
@@ -53,7 +58,9 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 			sleeping = true
 			bait_splash.play()
 			gravity_scale = 0
+			land_y = position.y
 			emit_signal("bait_in_water")
+
 			start_bob_once(10)
 			
 		else:
@@ -70,6 +77,18 @@ func start_bob_once(bob_amount):
 	tween.tween_property(self, "position:y", bob_amount, duration / 2).as_relative()
 	tween.tween_property(self, "position:y", -bob_amount, duration / 2).as_relative()
 
+func start_bobbing():
+	bait_state = "bobbing"
+	
+	bob_time = 0
+	bob_amplitude = 5
+	bob_speed = 14
+	
+func stop_bobbing():
+	bait_state = "in_water"
+	
+
+
 #func _on_LandArea_body_entered(body):
 #	if body == self:
 #		print("bait hit land")
@@ -82,5 +101,6 @@ func _on_LandArea_body_exited(body):
 			sleeping = true
 			bait_splash.play()
 			gravity_scale = 0
+			land_y = position.y
 			emit_signal("bait_in_water")
 			start_bob_once(2)
