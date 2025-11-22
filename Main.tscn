@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dtmrbj66gwiwl"]
+[gd_scene load_steps=19 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_5ncpa"]
 [ext_resource type="Script" uid="uid://xquxn635vn76" path="res://FishingController.gd" id="2_wi0c6"]
@@ -6,7 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="4_3tkgg"]
 [ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="4_wi0c6"]
 [ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://FishingRod.gd" id="5_l6ohk"]
+[ext_resource type="Script" uid="uid://r1lkqjda6cd3" path="res://Alert.gd" id="6_5vvyt"]
+[ext_resource type="Texture2D" uid="uid://ykcj55vkxf4o" path="res://reel-part.png" id="6_20pc6"]
 [ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://Player.gd" id="6_hp6x6"]
+[ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="6_oudfo"]
 [ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="7_d6rpx"]
 [ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://goldfish.png" id="8_r3kul"]
 
@@ -19,10 +22,10 @@ size = Vector2(50, 72)
 size = Vector2(898, 53)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sweqy"]
-size = Vector2(164, 434.25)
+size = Vector2(164, 509)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2hs0m"]
-size = Vector2(78.5, 493.125)
+size = Vector2(77.5, 524)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1jxqw"]
 size = Vector2(566.75, 403)
@@ -46,6 +49,7 @@ stream = ExtResource("7_d6rpx")
 
 [node name="Alert" type="Sprite2D" parent="FishingController"]
 texture = ExtResource("4_wi0c6")
+script = ExtResource("6_5vvyt")
 
 [node name="FishEscapeTimer" type="Label" parent="FishingController"]
 offset_right = 40.0
@@ -56,6 +60,12 @@ theme_override_font_sizes/font_size = 22
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 22
+
+[node name="ReelUI" type="Sprite2D" parent="FishingController"]
+z_index = 10
+position = Vector2(-200, 200)
+scale = Vector2(2, 2)
+texture = ExtResource("6_20pc6")
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("6_hp6x6")
@@ -86,15 +96,18 @@ player_path = NodePath("../Player")
 
 [node name="Rod" type="Sprite2D" parent="FishingRod"]
 scale = Vector2(0.7, 0.7)
-texture = ExtResource("4_3tkgg")
+texture = ExtResource("6_oudfo")
 centered = false
+offset = Vector2(-15, -125)
+
+[node name="RodTip" type="Node2D" parent="FishingRod/Rod"]
+position = Vector2(115, -115)
 
 [node name="FishingLine" type="Line2D" parent="."]
 width = 2.0
 default_color = Color(0, 0, 0, 1)
 
 [node name="FishSprite" type="Sprite2D" parent="."]
-visible = false
 texture = ExtResource("8_r3kul")
 
 [node name="Wall" type="StaticBody2D" parent="."]
@@ -114,14 +127,14 @@ debug_color = Color(0.7788229, 0.38453886, 0.5590459, 0.41960785)
 [node name="Wall3" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall3"]
-position = Vector2(362, 38.875)
+position = Vector2(362, 1.5)
 shape = SubResource("RectangleShape2D_sweqy")
 debug_color = Color(0.8092656, 0.35328978, 0.56258136, 0.41960785)
 
 [node name="Wall4" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
-position = Vector2(-323.25, 35.4375)
+position = Vector2(-323.75, 20)
 shape = SubResource("RectangleShape2D_2hs0m")
 debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
 

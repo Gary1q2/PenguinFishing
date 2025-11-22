@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Fishing"
-run/main_scene="uid://t8souq7rp5b0"
+run/main_scene="uid://cnppx6ita6to7"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 

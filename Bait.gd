@@ -52,6 +52,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	if position.y >= target_y and bait_state == "cast":
 		
 		if off_land:
+			print("in water")
 			bait_state = "in_water"
 			linear_velocity = Vector2.ZERO
 			
@@ -95,6 +96,7 @@ func stop_bobbing():
 
 func _on_LandArea_body_exited(body):
 	if body == self:
+		print('EXITED land')
 		off_land = true	
 		if bait_state == "rolling":
 			linear_velocity = Vector2.ZERO	
