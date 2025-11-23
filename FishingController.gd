@@ -16,7 +16,7 @@ var is_holding = false
 var skip_next_fishing_cycle = false
 
 
-
+@onready var fishing_ui: CanvasLayer = get_parent().get_node("FishingUI")
 @onready var rod_cast_sound: AudioStreamPlayer2D = $FishingSound
 @onready var reel_rod_sound: AudioStreamPlayer2D = $ReelRodSound
 
@@ -32,10 +32,7 @@ var skip_next_fishing_cycle = false
 @onready var rod_tip: Node2D = get_parent().get_node("FishingRod/Rod/RodTip")
 @onready var fishing_rod = get_parent().get_node("FishingRod")
 
-@onready var fish_timer_label: Label = $FishFightTimer
-@onready var fish_escape_label: Label = $FishEscapeTimer
 
-@onready var reel_UI: Sprite2D = $ReelUI
 
 
 # --- Ready callback ---
@@ -44,16 +41,7 @@ func _ready():
 	alert.visible = false
 	fishing_rod.visible = false
 	fish_sprite.visible = false
-	reel_UI.visible = false
-	
-	fish_timer_label.text = "lala"
-	fish_timer_label.visible = false
-	fish_timer_label.global_position = Vector2(100, 100)
-	fish_escape_label.text = "lala"
-	fish_escape_label.visible = false
-	fish_escape_label.global_position = Vector2(300, 100)
-	
-	
+
 	set_hook_timer = Timer.new()
 	set_hook_timer.one_shot = true
 	set_hook_timer.wait_time = 5
@@ -82,12 +70,6 @@ func _process(delta: float) -> void:
 				on_fish_fight_success()
 			
 		fish_escape_time -= delta
-
-	if is_holding:
-		reel_UI.rotation -= delta * 10
-
-	fish_timer_label.text = "%.2f" % hold_progress
-	fish_escape_label.text = "%.2f" % fish_escape_time
 	
 
 func cast_rod():
@@ -170,8 +152,15 @@ func set_hook():
 	set_hook_timer.stop()
 	state = "fish_on"
 	fish_escape_time = 10
-	fish_timer_label.visible = true
-	fish_escape_label.visible = true
+	
+	fishing_ui.fish_timer_label.visible = true
+	fishing_ui.fish_escape_label.visible = true
+	fishing_ui.fish_reel_label.visible = true
+		
+		
+		OK SORT OUT AND RENAME FISH ESCAPE TIMER AND FISH FIGHT TIME PROPERLY
+		
+		
 	on_set_hook_success()	
 	
 func on_set_hook_success():
@@ -179,7 +168,9 @@ func on_set_hook_success():
 	state = "fish_on"
 	fishing_rod.adjust_shaking(0.1, 20)
 	
-	reel_UI.visible = true
+	fishing_ui.reel_UI.visible = true
+	fishing_ui.fish_escape_bar.visible = true
+	fishing_ui.fish_reel_bar.visible = true
 	hold_progress = 5
 	is_holding = false
 	
@@ -200,11 +191,15 @@ func on_fish_fight_success():
 	reel_rod()
 	fishing_rod.stop_shaking()
 	fish_sprite.visible = true
-	reel_UI.visible = false;
+	fishing_ui.reel_UI.visible = false;
+	fishing_ui.fish_escape_bar.visible = false
+	fishing_ui.fish_reel_bar.visible = false
 
 func _on_fish_fight_timeout():
 	print("Fish ran away")
-	reel_UI.visible = false
+	fishing_ui.reel_UI.visible = false
+	fishing_ui.fish_escape_bar.visible = false
+	fishing_ui.fish_reel_bar.visible = false
 	fishing_rod.stop_shaking()
 	reel_rod()
 

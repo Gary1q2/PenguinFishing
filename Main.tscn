@@ -1,6 +1,7 @@
-[gd_scene load_steps=19 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=21 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_5ncpa"]
+[ext_resource type="Script" uid="uid://bxacuet2g7a6j" path="res://FishingUI.gd" id="2_c6i3y"]
 [ext_resource type="Script" uid="uid://xquxn635vn76" path="res://FishingController.gd" id="2_wi0c6"]
 [ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://reel-rod.ogg" id="3_3tkgg"]
 [ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="4_3tkgg"]
@@ -12,6 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="6_oudfo"]
 [ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="7_d6rpx"]
 [ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://goldfish.png" id="8_r3kul"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6i3y"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
 size = Vector2(50, 72)
@@ -37,6 +40,39 @@ size = Vector2(566.75, 403)
 [node name="Background" type="Sprite2D" parent="."]
 texture = ExtResource("1_5ncpa")
 
+[node name="FishingUI" type="CanvasLayer" parent="."]
+script = ExtResource("2_c6i3y")
+
+[node name="ReelUI" type="Sprite2D" parent="FishingUI"]
+z_index = 10
+position = Vector2(400, 600)
+scale = Vector2(2, 2)
+texture = ExtResource("6_20pc6")
+
+[node name="FishEscapeTimer" type="Label" parent="FishingUI"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
+
+[node name="FishFightTimer" type="Label" parent="FishingUI"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
+
+[node name="FishEscapeBar" type="ProgressBar" parent="FishingUI"]
+offset_right = 171.0
+offset_bottom = 27.0
+theme_override_styles/background = SubResource("StyleBoxFlat_c6i3y")
+value = 100.0
+
+[node name="FishReelBar" type="ProgressBar" parent="FishingUI"]
+offset_left = 1.0
+offset_top = 54.0
+offset_right = 172.0
+offset_bottom = 81.0
+theme_override_styles/background = SubResource("StyleBoxFlat_c6i3y")
+value = 100.0
+
 [node name="FishingController" type="Node2D" parent="."]
 script = ExtResource("2_wi0c6")
 
@@ -50,22 +86,6 @@ stream = ExtResource("7_d6rpx")
 [node name="Alert" type="Sprite2D" parent="FishingController"]
 texture = ExtResource("4_wi0c6")
 script = ExtResource("6_5vvyt")
-
-[node name="FishEscapeTimer" type="Label" parent="FishingController"]
-offset_right = 40.0
-offset_bottom = 31.0
-theme_override_font_sizes/font_size = 22
-
-[node name="FishFightTimer" type="Label" parent="FishingController"]
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 22
-
-[node name="ReelUI" type="Sprite2D" parent="FishingController"]
-z_index = 10
-position = Vector2(-200, 200)
-scale = Vector2(2, 2)
-texture = ExtResource("6_20pc6")
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("6_hp6x6")
@@ -139,6 +159,7 @@ shape = SubResource("RectangleShape2D_2hs0m")
 debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
 
 [node name="LandArea" type="Area2D" parent="."]
+visible = false
 collision_layer = 2
 collision_mask = 2
 
