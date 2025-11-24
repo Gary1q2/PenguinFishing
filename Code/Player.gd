@@ -8,6 +8,10 @@ var input: Vector2
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var fishing_con = get_node(fishing_con_path)
+@onready var animation = $Sprite2D/AnimationPlayer
+
+func _ready():
+	animation.play("idle")
 
 # --- Input handling ---
 func get_input() -> Vector2:
@@ -39,13 +43,19 @@ func _physics_process(delta):
 			fishing_con.set_hook()
 			fishing_con.start_wind_reel_during_game()
 		elif fishing_con.state == "fish_on":
-			print("HOLDING E to REEL FISH")
 			fishing_con.start_wind_reel_during_game()
 	
 	if Input.is_action_just_released("action"):
 		if (fishing_con.state == "fish_on"):
-			print("RELEASED E not reeling now")
 			fishing_con.stop_wind_reel_during_game()
+		elif fishing_con.state == "reeling":
+			fishing_con.stop_wind_reel_during_cast()
+			
+	if Input.is_key_pressed(KEY_1):
+		if fishing_con.state == "cast":
+			print('hacked a fish')
+			fishing_con.fish_biting()
+		
 
 #func show_fish():
 #	holding_fish = true

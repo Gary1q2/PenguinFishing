@@ -1,0 +1,296 @@
+[gd_scene load_steps=32 format=3 uid="uid://cnppx6ita6to7"]
+
+[ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_erwvk"]
+[ext_resource type="Script" uid="uid://bxacuet2g7a6j" path="res://Code/FishingUI.gd" id="2_2w5on"]
+[ext_resource type="Texture2D" uid="uid://ykcj55vkxf4o" path="res://reel-part.png" id="3_346fj"]
+[ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="4_0sclb"]
+[ext_resource type="Texture2D" uid="uid://pbrhsy3kjupy" path="res://player-real.png" id="5_sxkr1"]
+[ext_resource type="Script" uid="uid://xquxn635vn76" path="res://Code/FishingController.gd" id="6_fq0cl"]
+[ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://Sounds/reel-rod.ogg" id="7_hwpts"]
+[ext_resource type="AudioStream" uid="uid://dmjowpdjrukd3" path="res://Sounds/rod-cast.ogg" id="8_erwvk"]
+[ext_resource type="AudioStream" uid="uid://bwuik2knw5r8i" path="res://Sounds/catch-fish-jingle.ogg" id="8_jyqft"]
+[ext_resource type="AudioStream" uid="uid://cbdyek8vdpoag" path="res://Sounds/fish-biting.ogg" id="10_2w5on"]
+[ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="10_c4ay3"]
+[ext_resource type="Script" uid="uid://r1lkqjda6cd3" path="res://Code/Alert.gd" id="11_aht7i"]
+[ext_resource type="Texture2D" uid="uid://c2f3ssqvepkj1" path="res://water_splash.png" id="12_5jffn"]
+[ext_resource type="Texture2D" uid="uid://dmjyem4hfqefj" path="res://star.png" id="13_kpo4j"]
+[ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://Code/FishingRod.gd" id="14_4n42c"]
+[ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="15_c5snn"]
+[ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://Fish/goldfish.png" id="16_xvtyr"]
+[ext_resource type="PackedScene" uid="uid://bdf885s17krfg" path="res://Scenes/Bait.tscn" id="17_sxkr1"]
+[ext_resource type="Texture2D" uid="uid://c0b5mxf013d6" path="res://float.png" id="18_fq0cl"]
+[ext_resource type="AudioStream" uid="uid://dri0kw1yhx5xv" path="res://Sounds/bait-splash.ogg" id="19_hwpts"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6i3y"]
+
+[sub_resource type="Animation" id="Animation_kjvhd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_sc1dx"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5tuhn"]
+_data = {
+&"RESET": SubResource("Animation_kjvhd"),
+&"idle": SubResource("Animation_sc1dx")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
+size = Vector2(50, 72)
+
+[sub_resource type="FontVariation" id="FontVariation_sweqy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jyqft"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3pqv"]
+size = Vector2(898, 53)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sweqy"]
+size = Vector2(164, 509)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2hs0m"]
+size = Vector2(77.5, 524)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1jxqw"]
+size = Vector2(566.75, 403)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("1_erwvk")
+
+[node name="FishingUI" type="CanvasLayer" parent="."]
+script = ExtResource("2_2w5on")
+
+[node name="ReelUI" type="Sprite2D" parent="FishingUI"]
+z_index = 10
+position = Vector2(400, 600)
+scale = Vector2(2, 2)
+texture = ExtResource("3_346fj")
+
+[node name="FishEscapeTimer" type="Label" parent="FishingUI"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
+
+[node name="FishReelTimer" type="Label" parent="FishingUI"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
+
+[node name="FishEscapeBar" type="ProgressBar" parent="FishingUI"]
+offset_top = 7.0
+offset_right = 305.0
+offset_bottom = 34.0
+value = 100.0
+
+[node name="FishReelBar" type="ProgressBar" parent="FishingUI"]
+offset_top = 68.0
+offset_right = 306.0
+offset_bottom = 101.0
+theme_override_styles/background = SubResource("StyleBoxFlat_c6i3y")
+value = 100.0
+
+[node name="Player" type="CharacterBody2D" parent="."]
+script = ExtResource("4_0sclb")
+fishing_con_path = NodePath("../FishingController")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture_filter = 1
+texture = ExtResource("5_sxkr1")
+hframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Sprite2D"]
+libraries = {
+&"": SubResource("AnimationLibrary_5tuhn")
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(0, 8)
+shape = SubResource("RectangleShape2D_hqtel")
+
+[node name="Label" type="Label" parent="Player"]
+visible = false
+offset_left = -60.0
+offset_top = -80.0
+offset_right = 75.0
+offset_bottom = -52.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("FontVariation_sweqy")
+theme_override_font_sizes/font_size = 20
+text = "Press E to fish"
+
+[node name="FishingController" type="Node2D" parent="."]
+script = ExtResource("6_fq0cl")
+
+[node name="RodReelSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("7_hwpts")
+parameters/looping = true
+
+[node name="RodCastSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("8_erwvk")
+
+[node name="CatchFishSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("8_jyqft")
+
+[node name="FishBitingSound" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("10_2w5on")
+parameters/looping = true
+
+[node name="Alert" type="Sprite2D" parent="FishingController"]
+texture = ExtResource("10_c4ay3")
+script = ExtResource("11_aht7i")
+
+[node name="WaterSplash" type="CPUParticles2D" parent="FishingController"]
+emitting = false
+texture = ExtResource("12_5jffn")
+lifetime = 1.5
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 25.0
+gravity = Vector2(0, 500)
+initial_velocity_min = 200.0
+initial_velocity_max = 300.0
+angular_velocity_min = -90.0
+angular_velocity_max = -90.0
+damping_min = 0.1
+damping_max = 0.1
+scale_amount_max = 1.5
+
+[node name="BaitSplash" type="CPUParticles2D" parent="FishingController"]
+emitting = false
+texture = ExtResource("12_5jffn")
+lifetime = 0.75
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+gravity = Vector2(0, 500)
+initial_velocity_min = 100.0
+initial_velocity_max = 300.0
+angular_velocity_min = -90.0
+angular_velocity_max = -90.0
+damping_min = 0.1
+damping_max = 0.1
+scale_amount_max = 1.5
+
+[node name="StarParticles" type="CPUParticles2D" parent="FishingController"]
+emitting = false
+texture = ExtResource("13_kpo4j")
+lifetime = 10.0
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 500)
+initial_velocity_min = 200.0
+initial_velocity_max = 300.0
+angular_velocity_min = -90.0
+angular_velocity_max = -90.0
+damping_min = 0.1
+damping_max = 0.1
+scale_amount_max = 1.5
+
+[node name="FishingRod" type="Node2D" parent="."]
+script = ExtResource("14_4n42c")
+player_path = NodePath("../Player")
+
+[node name="Rod" type="Sprite2D" parent="FishingRod"]
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("15_c5snn")
+centered = false
+offset = Vector2(-15, -125)
+
+[node name="RodTip" type="Node2D" parent="FishingRod/Rod"]
+position = Vector2(115, -115)
+
+[node name="FishingLine" type="Line2D" parent="."]
+width = 2.0
+default_color = Color(0, 0, 0, 1)
+
+[node name="Bait" parent="." instance=ExtResource("17_sxkr1")]
+
+[node name="BaitSprite" type="Sprite2D" parent="Bait"]
+texture = ExtResource("18_fq0cl")
+
+[node name="BaitArea" type="Area2D" parent="Bait"]
+
+[node name="BaitCollision" type="CollisionShape2D" parent="Bait/BaitArea"]
+light_mask = 2
+visibility_layer = 2
+shape = SubResource("RectangleShape2D_jyqft")
+
+[node name="BaitSplash" type="AudioStreamPlayer2D" parent="Bait"]
+stream = ExtResource("19_hwpts")
+
+[node name="FishSprite" type="Sprite2D" parent="."]
+texture = ExtResource("16_xvtyr")
+
+[node name="Wall" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
+position = Vector2(1, -258)
+shape = SubResource("RectangleShape2D_i3pqv")
+debug_color = Color(0.83386874, 0.32519782, 0.56177956, 0.41960785)
+
+[node name="Wall2" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2"]
+position = Vector2(20, 273)
+shape = SubResource("RectangleShape2D_i3pqv")
+debug_color = Color(0.7788229, 0.38453886, 0.5590459, 0.41960785)
+
+[node name="Wall3" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall3"]
+position = Vector2(362, 1.5)
+shape = SubResource("RectangleShape2D_sweqy")
+debug_color = Color(0.8092656, 0.35328978, 0.56258136, 0.41960785)
+
+[node name="Wall4" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
+position = Vector2(-323.75, 20)
+shape = SubResource("RectangleShape2D_2hs0m")
+debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
+
+[node name="LandArea" type="Area2D" parent="."]
+visible = false
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandArea"]
+position = Vector2(-0.375, 40)
+shape = SubResource("RectangleShape2D_1jxqw")
+
+[connection signal="body_entered" from="LandArea" to="Player" method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="LandArea" to="Player" method="_on_area_2d_body_exited"]

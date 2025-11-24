@@ -1,14 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://dtmrbj66gwiwl"]
+[gd_scene load_steps=16 format=3 uid="uid://hhmnqtcfrhu2"]
 
 [ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_5ncpa"]
-[ext_resource type="Script" uid="uid://xquxn635vn76" path="res://FishingController.gd" id="2_wi0c6"]
-[ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://reel-rod.ogg" id="3_3tkgg"]
+[ext_resource type="Script" uid="uid://xquxn635vn76" path="res://Code/FishingController.gd" id="2_wi0c6"]
+[ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://Sounds/reel-rod.ogg" id="3_3tkgg"]
 [ext_resource type="Texture2D" uid="uid://c67q1hv7elfr0" path="res://player.png" id="4_3tkgg"]
 [ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="4_wi0c6"]
-[ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://FishingRod.gd" id="5_l6ohk"]
-[ext_resource type="Script" uid="uid://u1o4cucfsce4" path="res://Player.gd" id="6_hp6x6"]
-[ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://cast-rod.ogg" id="7_d6rpx"]
-[ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://goldfish.png" id="8_r3kul"]
+[ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://Code/FishingRod.gd" id="5_l6ohk"]
+[ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="6_hp6x6"]
+[ext_resource type="AudioStream" uid="uid://bkfq4tbsuhxx6" path="res://Sounds/cast-rod.ogg" id="7_d6rpx"]
+[ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://Fish/goldfish.png" id="8_r3kul"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hqtel"]
 size = Vector2(50, 72)
