@@ -38,6 +38,8 @@ func _physics_process(delta):
 		if fishing_con.state == "uncast":
 			fishing_con.cast_rod()
 		elif fishing_con.state == "cast":
+			fishing_con.hold_action_during_cast()
+		elif fishing_con.state == "bait_landed":
 			fishing_con.reel_rod()
 		elif fishing_con.state == "fish_biting":
 			fishing_con.set_hook()
@@ -49,12 +51,18 @@ func _physics_process(delta):
 		if (fishing_con.state == "fish_on"):
 			fishing_con.stop_wind_reel_during_game()
 		elif fishing_con.state == "reeling":
-			fishing_con.stop_wind_reel_during_cast()
+			fishing_con.stop_reel_rod()
+		elif fishing_con.state == "cast":
+			fishing_con.do_not_reel_after_cast_lands()
 			
 	if Input.is_key_pressed(KEY_1):
-		if fishing_con.state == "cast":
+		if fishing_con.state == "bait_landed":
 			print('hacked a fish')
 			fishing_con.fish_biting()
+			
+	#if Input.is_key_pressed(KEY_0):
+	#	var scene = get_tree().current_scene
+	#	get_tree().change_scene_to_file(scene.filename)
 		
 
 #func show_fish():

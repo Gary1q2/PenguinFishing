@@ -1,6 +1,6 @@
 extends Node2D
 
-var state = "uncast" # uncast, cast, reeling, fish_biting, fish_on
+var state = "uncast" # uncast, cast, bait_land, fish_biting, fish_on
 var is_fishing
 var holding_fish = false
 
@@ -14,6 +14,8 @@ var is_holding = false
 var target_fish = null
 
 var skip_next_fishing_cycle = false
+
+var auto_reel_after_cast = false
 
 
 @onready var fishing_ui: CanvasLayer = get_parent().get_node("FishingUI")
@@ -54,15 +56,22 @@ func _ready():
 	bait.visible = false
 	
 	bait.connect("bait_in_water", Callable(self, "_on_bait_in_water"))
+	bait.connect("bait_landed", Callable(self, "_on_bait_landed"))
 	var land_area = get_parent().get_node("LandArea")
 	land_area.connect("body_entered", Callable(bait, "_on_LandArea_body_entered"))
 	land_area.connect("body_exited", Callable(bait, "_on_LandArea_body_exited"))
 	
 
+
 func emit_stars(position):
 	star_particles.global_position = position
 	star_particles.emitting = true
 
+
+func do_not_reel_after_cast_lands():
+	auto_reel_after_cast = false
+
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	is_fishing = state != "uncast"
@@ -79,23 +88,21 @@ func _process(delta: float) -> void:
 			
 		fish_escape_time -= delta
 	
-	#elif state == "cast":
-		#bait.move_towards_player(delta)
+	#elif state == "reeling":
+	#	bait.move_towards_player(delta)
 	
 	# Splash effect
 	if state == "fish_biting" || state == "fish_on":
 		if randf() * 10 < 0.8:
 			play_bait_splash()
 
-func stop_wind_reel_during_cast():
-	state = "cast"
-	print("stop winind")
 	
 
 func cast_rod():
 	fish_sprite.visible = false
 	fishing_rod.visible = true
 	state = "cast"
+	auto_reel_after_cast = true
 	
 	bait.cast(rod_sprite.global_position, !rod_sprite.flip_h, 500, rod_sprite.global_position.y)
 
@@ -115,12 +122,26 @@ func uncast_rod():
 	bait.visible = false
 
 func reel_rod():
-	print('player global: ' + str(player.global_position) + "    local: " + str(player.position))
-	print('bait   global: ' + str(bait.global_position) + "    local: " + str(bait.position))
+	if state != "bait_landed":
+		return
 	
 	print("WINDING")
+	bait.sleeping = false
+	bait.bait_state = "reeling"
 	state = "reeling"
+	rod_reel_sound.play()
 	
+func stop_reel_rod():
+	print("UNWINDING")
+	bait.sleeping = true
+	bait.bait_state = "in_water"
+	state = "bait_landed"
+	rod_reel_sound.stop()
+
+	
+func stop_wind_reel_during_cast():
+	state = "bait_landed"
+	print("stop winind")
 
 func update_fishing_line():
 	#var rod_tip_pos = Vector2(rod_sprite.global_position.x + (40 if !rod_sprite.flip_h else -40), rod_sprite.global_position.y-45)
@@ -131,6 +152,16 @@ func update_fishing_line():
 func _on_bait_in_water():
 	play_water_splash()
 	start_fishing_cycle()
+	
+	if auto_reel_after_cast:
+		reel_rod()
+		auto_reel_after_cast = false
+		
+func hold_action_during_cast():
+	auto_reel_after_cast = true
+	
+func _on_bait_landed():
+	state = "bait_landed"
 	
 func play_water_splash():
 	var splash = water_splash.duplicate()
@@ -156,15 +187,16 @@ func play_bait_splash():
 
 	
 func start_fishing_cycle():
-	if state != "cast":
+	if state != "bait_landed":
 		return
 		
 	print("Start fish cycle")
-	while state == "cast":
+	while state == "bait_landed" && bait.check_on_land() == false:
 		skip_next_fishing_cycle = false
 		await get_tree().create_timer(3.0).timeout
 		
-		if state != "cast" || skip_next_fishing_cycle == true:
+		if state != "bait_landed" || bait.check_on_land() || skip_next_fishing_cycle == true:
+			print("on land now bye")
 			return
 			
 		var roll = randf()
@@ -255,7 +287,7 @@ func _on_set_hook_timeout():
 	if state == "fish_biting":
 		print("too slow rip")
 		alert.visible = false
-		state = "cast"
+		state = "bait_landed"
 		start_fishing_cycle()
 		fishing_rod.stop_shaking()
 		bait.start_bobbing(2, 5)

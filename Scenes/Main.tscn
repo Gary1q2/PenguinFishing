@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=33 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_erwvk"]
 [ext_resource type="Script" uid="uid://bxacuet2g7a6j" path="res://Code/FishingUI.gd" id="2_2w5on"]
@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://caf26xtsl12se" path="res://Code/FishingRod.gd" id="14_4n42c"]
 [ext_resource type="Texture2D" uid="uid://4x4sffp2yjn2" path="res://fishing-rod.png" id="15_c5snn"]
 [ext_resource type="Texture2D" uid="uid://cmnllokiygu1u" path="res://Fish/goldfish.png" id="16_xvtyr"]
-[ext_resource type="PackedScene" uid="uid://bdf885s17krfg" path="res://Scenes/Bait.tscn" id="17_sxkr1"]
+[ext_resource type="Script" uid="uid://cgqmg5jc04foy" path="res://Code/Bait.gd" id="17_sxkr1"]
 [ext_resource type="Texture2D" uid="uid://c0b5mxf013d6" path="res://float.png" id="18_fq0cl"]
 [ext_resource type="AudioStream" uid="uid://dri0kw1yhx5xv" path="res://Sounds/bait-splash.ogg" id="19_hwpts"]
 
@@ -65,6 +65,8 @@ _data = {
 size = Vector2(50, 72)
 
 [sub_resource type="FontVariation" id="FontVariation_sweqy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sxkr1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyqft"]
 
@@ -237,20 +239,28 @@ position = Vector2(115, -115)
 width = 2.0
 default_color = Color(0, 0, 0, 1)
 
-[node name="Bait" parent="." instance=ExtResource("17_sxkr1")]
+[node name="Bait" type="RigidBody2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("17_sxkr1")
 
-[node name="BaitSprite" type="Sprite2D" parent="Bait"]
+[node name="BobGroup" type="Node2D" parent="Bait"]
+
+[node name="BaitSprite" type="Sprite2D" parent="Bait/BobGroup"]
 texture = ExtResource("18_fq0cl")
 
 [node name="BaitArea" type="Area2D" parent="Bait"]
 
-[node name="BaitCollision" type="CollisionShape2D" parent="Bait/BaitArea"]
-light_mask = 2
-visibility_layer = 2
-shape = SubResource("RectangleShape2D_jyqft")
+[node name="BaitAreaCollision" type="CollisionShape2D" parent="Bait/BaitArea"]
+shape = SubResource("RectangleShape2D_sxkr1")
 
 [node name="BaitSplash" type="AudioStreamPlayer2D" parent="Bait"]
 stream = ExtResource("19_hwpts")
+
+[node name="BaitCollision" type="CollisionShape2D" parent="Bait"]
+light_mask = 2
+visibility_layer = 2
+shape = SubResource("RectangleShape2D_jyqft")
 
 [node name="FishSprite" type="Sprite2D" parent="."]
 texture = ExtResource("16_xvtyr")
@@ -284,9 +294,6 @@ shape = SubResource("RectangleShape2D_2hs0m")
 debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
 
 [node name="LandArea" type="Area2D" parent="."]
-visible = false
-collision_layer = 2
-collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LandArea"]
 position = Vector2(-0.375, 40)
