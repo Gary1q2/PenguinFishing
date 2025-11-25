@@ -1,7 +1,10 @@
-[gd_scene load_steps=33 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=38 format=3 uid="uid://cnppx6ita6to7"]
 
-[ext_resource type="Texture2D" uid="uid://uyt2ory8d5tw" path="res://iceberg.png" id="1_erwvk"]
+[ext_resource type="Shader" uid="uid://b0u1rnkg4e58k" path="res://Code/Water.gdshader" id="1_fq0cl"]
+[ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Scenes/WaterTest.gdshader" id="1_jyqft"]
+[ext_resource type="Texture2D" uid="uid://ir5im6i6yx6m" path="res://iceberg-1440x900.png" id="1_sxkr1"]
 [ext_resource type="Script" uid="uid://bxacuet2g7a6j" path="res://Code/FishingUI.gd" id="2_2w5on"]
+[ext_resource type="Texture2D" uid="uid://bnvyre82pr3up" path="res://water_texture.png" id="2_3tgeq"]
 [ext_resource type="Texture2D" uid="uid://ykcj55vkxf4o" path="res://reel-part.png" id="3_346fj"]
 [ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="4_0sclb"]
 [ext_resource type="Texture2D" uid="uid://pbrhsy3kjupy" path="res://player-real.png" id="5_sxkr1"]
@@ -20,6 +23,34 @@
 [ext_resource type="Script" uid="uid://cgqmg5jc04foy" path="res://Code/Bait.gd" id="17_sxkr1"]
 [ext_resource type="Texture2D" uid="uid://c0b5mxf013d6" path="res://float.png" id="18_fq0cl"]
 [ext_resource type="AudioStream" uid="uid://dri0kw1yhx5xv" path="res://Sounds/bait-splash.ogg" id="19_hwpts"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3tgeq"]
+shader = ExtResource("1_jyqft")
+shader_parameter/transparency = 1.0
+shader_parameter/color0 = Color(0.16209206, 0.44749683, 0.99999994, 1)
+shader_parameter/color1 = Color(0.28030762, 0.49561113, 1, 1)
+shader_parameter/color2 = Color(0.101712234, 0.36861393, 0.9999996, 1)
+shader_parameter/color3 = Color(0.13170215, 0.36509743, 0.99999183, 1)
+shader_parameter/color4 = Color(4.10074e-05, 0.5252694, 0.97414595, 1)
+shader_parameter/color5 = Color(0.070444725, 0.3079188, 1, 1)
+shader_parameter/Direction1 = Vector2(1, 0)
+shader_parameter/Direction2 = Vector2(1, 1)
+shader_parameter/Speed1 = 5.0
+shader_parameter/Speed2 = 5.0
+shader_parameter/noise = ExtResource("2_3tgeq")
+shader_parameter/pixel_size = 500
+shader_parameter/heatAmplitude = 0.02000000095
+shader_parameter/heatPeriod = 0.0
+shader_parameter/heatPhaseShift = 0.0
+shader_parameter/heatUpperLimit = 1.00000002375
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jyqft"]
+shader = ExtResource("1_fq0cl")
+shader_parameter/wave_speed_x = 0.5
+shader_parameter/wave_speed_y = 0.3
+shader_parameter/wave_amplitude = 5.0
+shader_parameter/wave_frequency = 20.0
+shader_parameter/water_color = Vector4(0.23, 0.52, 1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6i3y"]
 
@@ -86,8 +117,33 @@ size = Vector2(566.75, 403)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_3tgeq")
+offset_left = -906.0
+offset_top = -604.0
+offset_right = 893.0
+offset_bottom = 590.0
+texture = ExtResource("2_3tgeq")
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+visible = false
+offset_left = -849.0
+offset_top = -549.0
+offset_right = 853.0
+offset_bottom = 586.0
+color = Color(0.3364876, 0.58849144, 1, 1)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_jyqft")
+offset_left = -864.0
+offset_top = -580.0
+offset_right = 838.0
+offset_bottom = 555.0
+color = Color(0.3364876, 0.58849144, 1, 1)
+
 [node name="Background" type="Sprite2D" parent="."]
-texture = ExtResource("1_erwvk")
+texture = ExtResource("1_sxkr1")
 
 [node name="FishingUI" type="CanvasLayer" parent="."]
 script = ExtResource("2_2w5on")
@@ -268,14 +324,14 @@ texture = ExtResource("16_xvtyr")
 [node name="Wall" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
-position = Vector2(1, -258)
+position = Vector2(2, -271)
 shape = SubResource("RectangleShape2D_i3pqv")
 debug_color = Color(0.83386874, 0.32519782, 0.56177956, 0.41960785)
 
 [node name="Wall2" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2"]
-position = Vector2(20, 273)
+position = Vector2(23, 251)
 shape = SubResource("RectangleShape2D_i3pqv")
 debug_color = Color(0.7788229, 0.38453886, 0.5590459, 0.41960785)
 
@@ -296,7 +352,7 @@ debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
 [node name="LandArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LandArea"]
-position = Vector2(-0.375, 40)
+position = Vector2(-1, 24)
 shape = SubResource("RectangleShape2D_1jxqw")
 
 [connection signal="body_entered" from="LandArea" to="Player" method="_on_area_2d_body_entered"]
