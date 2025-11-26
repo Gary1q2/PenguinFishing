@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=45 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Shader" uid="uid://b0u1rnkg4e58k" path="res://Code/Water.gdshader" id="1_fq0cl"]
 [ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Scenes/WaterTest.gdshader" id="1_jyqft"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://bnvyre82pr3up" path="res://water_texture.png" id="2_3tgeq"]
 [ext_resource type="Texture2D" uid="uid://ykcj55vkxf4o" path="res://reel-part.png" id="3_346fj"]
 [ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="4_0sclb"]
+[ext_resource type="Texture2D" uid="uid://deaon2hnhewve" path="res://sky.png" id="4_aht7i"]
+[ext_resource type="Texture2D" uid="uid://c74os0eikxw43" path="res://iceberg-real.png" id="5_c4ay3"]
 [ext_resource type="Texture2D" uid="uid://pbrhsy3kjupy" path="res://player-real.png" id="5_sxkr1"]
 [ext_resource type="Script" uid="uid://xquxn635vn76" path="res://Code/FishingController.gd" id="6_fq0cl"]
 [ext_resource type="FontFile" uid="uid://dsitgff6pn1mm" path="res://ARCADECLASSIC.TTF" id="7_3tgeq"]
@@ -24,6 +26,8 @@
 [ext_resource type="Script" uid="uid://cgqmg5jc04foy" path="res://Code/Bait.gd" id="17_sxkr1"]
 [ext_resource type="Texture2D" uid="uid://c0b5mxf013d6" path="res://float.png" id="18_fq0cl"]
 [ext_resource type="AudioStream" uid="uid://dri0kw1yhx5xv" path="res://Sounds/bait-splash.ogg" id="19_hwpts"]
+[ext_resource type="AudioStream" uid="uid://mt228vjyenek" path="res://Sounds/fishing-on-the-lake-310740.mp3" id="21_5jffn"]
+[ext_resource type="AudioStream" uid="uid://c5v7uvavx25jw" path="res://Sounds/bait-roll.ogg" id="26_kpo4j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3tgeq"]
 shader = ExtResource("1_jyqft")
@@ -128,7 +132,7 @@ size = Vector2(164, 509)
 size = Vector2(77.5, 524)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1jxqw"]
-size = Vector2(566.75, 403)
+size = Vector2(842.1875, 250)
 
 [node name="Node2D" type="Node2D"]
 
@@ -137,7 +141,7 @@ size = Vector2(566.75, 403)
 [node name="TextureRect" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_3tgeq")
 offset_left = -906.0
-offset_top = -604.0
+offset_top = -247.0
 offset_right = 893.0
 offset_bottom = 590.0
 texture = ExtResource("2_3tgeq")
@@ -159,8 +163,25 @@ offset_right = 838.0
 offset_bottom = 555.0
 color = Color(0.3364876, 0.58849144, 1, 1)
 
-[node name="Background" type="Sprite2D" parent="."]
+[node name="SkyHehe" type="Sprite2D" parent="."]
+position = Vector2(-8, -425.00003)
+scale = Vector2(2.8599489, 0.9759914)
+texture = ExtResource("4_aht7i")
+
+[node name="Sky" type="ColorRect" parent="."]
+visible = false
+offset_left = -1451.0
+offset_top = -1145.0
+offset_right = 2093.0
+offset_bottom = -10.0
+color = Color(0.2037744, 0.6483306, 0.8854639, 1)
+
+[node name="Iceberg" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("1_sxkr1")
+
+[node name="IcebergTest" type="Sprite2D" parent="."]
+texture = ExtResource("5_c4ay3")
 
 [node name="FishingUI" type="CanvasLayer" parent="."]
 script = ExtResource("2_2w5on")
@@ -198,6 +219,11 @@ theme_override_font_sizes/font_size = 50
 theme_override_styles/background = SubResource("StyleBoxFlat_jyqft")
 theme_override_styles/fill = SubResource("StyleBoxFlat_3tgeq")
 value = 100.0
+
+[node name="FishName" type="Label" parent="FishingUI"]
+offset_right = 40.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 22
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("4_0sclb")
@@ -300,6 +326,11 @@ damping_min = 0.1
 damping_max = 0.1
 scale_amount_max = 1.5
 
+[node name="Music" type="AudioStreamPlayer2D" parent="FishingController"]
+stream = ExtResource("21_5jffn")
+volume_db = -10.0
+parameters/looping = true
+
 [node name="FishingRod" type="Node2D" parent="."]
 script = ExtResource("14_4n42c")
 player_path = NodePath("../Player")
@@ -332,6 +363,10 @@ texture = ExtResource("18_fq0cl")
 [node name="BaitAreaCollision" type="CollisionShape2D" parent="Bait/BaitArea"]
 shape = SubResource("RectangleShape2D_sxkr1")
 
+[node name="BaitRoll" type="AudioStreamPlayer2D" parent="Bait"]
+stream = ExtResource("26_kpo4j")
+parameters/looping = true
+
 [node name="BaitSplash" type="AudioStreamPlayer2D" parent="Bait"]
 stream = ExtResource("19_hwpts")
 
@@ -346,35 +381,35 @@ texture = ExtResource("16_xvtyr")
 [node name="Wall" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
-position = Vector2(2, -271)
+position = Vector2(13, -77)
 shape = SubResource("RectangleShape2D_i3pqv")
 debug_color = Color(0.83386874, 0.32519782, 0.56177956, 0.41960785)
 
 [node name="Wall2" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2"]
-position = Vector2(23, 251)
+position = Vector2(7, 293)
 shape = SubResource("RectangleShape2D_i3pqv")
 debug_color = Color(0.7788229, 0.38453886, 0.5590459, 0.41960785)
 
 [node name="Wall3" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall3"]
-position = Vector2(362, 1.5)
+position = Vector2(493, 60)
 shape = SubResource("RectangleShape2D_sweqy")
 debug_color = Color(0.8092656, 0.35328978, 0.56258136, 0.41960785)
 
 [node name="Wall4" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
-position = Vector2(-323.75, 20)
+position = Vector2(-463, 36)
 shape = SubResource("RectangleShape2D_2hs0m")
 debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
 
 [node name="LandArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LandArea"]
-position = Vector2(-1, 24)
+position = Vector2(-3.09375, 141)
 shape = SubResource("RectangleShape2D_1jxqw")
 
 [connection signal="body_entered" from="LandArea" to="Player" method="_on_area_2d_body_entered"]

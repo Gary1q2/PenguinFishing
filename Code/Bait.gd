@@ -19,13 +19,16 @@ var bob_amplitude = 5       # pixels up/down
 var bob_speed = 2.0         # speed of bobbing
 var bob_time = 0.0
 
-@onready var bait_splash = $BaitSplash
+@onready var bait_splash_sound = $BaitSplash
+@onready var bait_roll_sound = $BaitRoll
+
 @onready var bait_sprite = get_node("BobGroup/BaitSprite")
 @onready var bob_group = get_node("BobGroup")
 @onready var land_detector = $BaitArea
 
 @onready var player = get_parent().get_node("Player")
 @onready var fishing_con = get_parent().get_node("FishingController")
+
 
 
 
@@ -82,6 +85,7 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 				gravity_scale = 0
 				print("on land")
 				angular_velocity = 25 * (1 if facing_right else -1)
+				bait_roll_sound.play()
 			else:
 				bait_enter_water()
 				print("on water")
@@ -120,7 +124,8 @@ func bait_enter_water():
 	linear_velocity = Vector2.ZERO
 	
 	sleeping = true
-	bait_splash.play()
+	bait_splash_sound.play()
+	bait_roll_sound.stop()
 	gravity_scale = 0
 	#land_pos = bob_group.global_position
 	emit_signal("bait_in_water")

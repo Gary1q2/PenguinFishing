@@ -23,6 +23,7 @@ var auto_reel_after_cast = false
 @onready var rod_reel_sound: AudioStreamPlayer2D = $RodReelSound
 @onready var catch_fish_sound: AudioStreamPlayer2D = $CatchFishSound
 @onready var fish_biting_sound: AudioStreamPlayer2D = $FishBitingSound
+@onready var bgm_music: AudioStreamPlayer2D = $Music
 
 @onready var bait: RigidBody2D = get_parent().get_node("Bait")
 
@@ -60,6 +61,9 @@ func _ready():
 	var land_area = get_parent().get_node("LandArea")
 	land_area.connect("body_entered", Callable(bait, "_on_LandArea_body_entered"))
 	land_area.connect("body_exited", Callable(bait, "_on_LandArea_body_exited"))
+	
+	
+	bgm_music.play()
 	
 
 

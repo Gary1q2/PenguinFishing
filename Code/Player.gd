@@ -32,6 +32,7 @@ func _physics_process(delta):
 		sprite.flip_h = false
 	elif velocity.x < 0:
 		sprite.flip_h = true
+	print(fishing_con.state)
 
 	# Start fishing input
 	if Input.is_action_just_pressed("action"):
@@ -39,7 +40,7 @@ func _physics_process(delta):
 			fishing_con.cast_rod()
 		elif fishing_con.state == "cast":
 			fishing_con.hold_action_during_cast()
-		elif fishing_con.state == "bait_landed":
+		elif fishing_con.state == "bait_landed" && fishing_con.bait.check_on_land() == false:
 			fishing_con.reel_rod()
 		elif fishing_con.state == "fish_biting":
 			fishing_con.set_hook()
