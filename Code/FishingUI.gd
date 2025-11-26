@@ -20,8 +20,9 @@ var gradient_colors = [
 	Color(1, 1, 0.2),    # yellow
 	Color(0.2, 1, 0.2),  # green
 ]
-var gradient_positions = [0.0, 0.2, 0.7, 1.0]  # normalized positions along the bar
+var gradient_positions = [0, 0.25, 0.75, 1.0]  # normalized positions along the bar
 
+var fish_escape_bar_start_pos;
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,27 +32,37 @@ func _ready() -> void:
 	fish_reel_label.visible = false
 	fish_reel_label.global_position = Vector2(600, 500)
 	
+	var y_pos = 600
+	var x_pos = 350
+	
+	var viewport_size = get_viewport().size
+	print(viewport_size)
+	
 	reel_UI.visible = false
+	reel_UI.global_position = Vector2(x_pos, y_pos + 100)
+	
 	
 
 	fish_escape_label.text = "lala"
 	fish_escape_label.visible = false
-	fish_escape_label.global_position = Vector2(500, 500)
+	fish_escape_label.global_position = Vector2(x_pos + 100, y_pos)
 	
 	fish_escape_bar.visible = false
 	fish_escape_bar.min_value = 0
 	fish_escape_bar.max_value = fishing_con.fish_escape_time
 	fish_escape_bar.value = 10
-	fish_escape_bar.global_position = Vector2(500, 600)
+	fish_escape_bar.global_position = Vector2(x_pos + 100, y_pos + 25)
 	fish_escape_bar.scale.y = 0.5
+	fish_escape_bar_start_pos = fish_escape_bar.global_position
 	#fish_escape_bar.rect_size = Vector2(300, 300)
 
 	fish_reel_bar.visible = false
 	fish_reel_bar.min_value = 0
 	fish_reel_bar.max_value = 5
 	fish_reel_bar.value = 0
-	fish_reel_bar.global_position = Vector2(500, 550)
+	fish_reel_bar.global_position = Vector2(x_pos+100, y_pos+50)
 	
+
 func set_fish_escape_bar_max(value):
 	fish_escape_bar.max_value = value
 	
@@ -73,10 +84,11 @@ func _process(delta):
 	fish_escape_bar.modulate = get_gradient_color(bar_percent)
 	if bar_percent <= 0.2:
 		var shake_amount = 3
-		fish_escape_bar.position.x += randf_range(-shake_amount, shake_amount)
-		fish_escape_bar.position.y += randf_range(-shake_amount, shake_amount)
+		if randf() < 0.5:
+			fish_escape_bar.position.x += randf_range(-shake_amount, shake_amount)
+			#fish_escape_bar.position.y += randf_range(-shake_amount, shake_amount)
 	else:
-		fish_escape_bar.global_position = Vector2(500, 600)
+		fish_escape_bar.global_position = fish_escape_bar_start_pos
 		
 	fish_reel_bar.value = fishing_con.hold_progress
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=41 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Shader" uid="uid://b0u1rnkg4e58k" path="res://Code/Water.gdshader" id="1_fq0cl"]
 [ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Scenes/WaterTest.gdshader" id="1_jyqft"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="4_0sclb"]
 [ext_resource type="Texture2D" uid="uid://pbrhsy3kjupy" path="res://player-real.png" id="5_sxkr1"]
 [ext_resource type="Script" uid="uid://xquxn635vn76" path="res://Code/FishingController.gd" id="6_fq0cl"]
+[ext_resource type="FontFile" uid="uid://dsitgff6pn1mm" path="res://ARCADECLASSIC.TTF" id="7_3tgeq"]
 [ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://Sounds/reel-rod.ogg" id="7_hwpts"]
 [ext_resource type="AudioStream" uid="uid://dmjowpdjrukd3" path="res://Sounds/rod-cast.ogg" id="8_erwvk"]
 [ext_resource type="AudioStream" uid="uid://bwuik2knw5r8i" path="res://Sounds/catch-fish-jingle.ogg" id="8_jyqft"]
@@ -52,7 +53,23 @@ shader_parameter/wave_amplitude = 5.0
 shader_parameter/wave_frequency = 20.0
 shader_parameter/water_color = Vector4(0.23, 0.52, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6i3y"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4ay3"]
+bg_color = Color(0.29726213, 0.6625997, 0.70501643, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyqft"]
+bg_color = Color(0.67929447, 0.40873823, 0.11109231, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tgeq"]
+bg_color = Color(0.3892793, 0.21361017, 0.096350245, 1)
+border_width_left = 7
+border_width_top = 7
+border_width_bottom = 7
+border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Animation" id="Animation_kjvhd"]
 length = 0.001
@@ -166,15 +183,20 @@ theme_override_font_sizes/font_size = 22
 
 [node name="FishEscapeBar" type="ProgressBar" parent="FishingUI"]
 offset_top = 7.0
-offset_right = 305.0
-offset_bottom = 34.0
+offset_right = 661.0
+offset_bottom = 38.0
+theme_override_styles/background = SubResource("StyleBoxFlat_c4ay3")
 value = 100.0
+show_percentage = false
 
 [node name="FishReelBar" type="ProgressBar" parent="FishingUI"]
 offset_top = 68.0
-offset_right = 306.0
-offset_bottom = 101.0
-theme_override_styles/background = SubResource("StyleBoxFlat_c6i3y")
+offset_right = 662.0
+offset_bottom = 151.0
+theme_override_fonts/font = ExtResource("7_3tgeq")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/background = SubResource("StyleBoxFlat_jyqft")
+theme_override_styles/fill = SubResource("StyleBoxFlat_3tgeq")
 value = 100.0
 
 [node name="Player" type="CharacterBody2D" parent="."]
