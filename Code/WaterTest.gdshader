@@ -10,8 +10,8 @@ uniform vec4 color3 : source_color;
 uniform vec4 color4 : source_color;
 uniform vec4 color5 : source_color;
 
-uniform vec2 Direction1 = vec2(1, 0); 
-uniform vec2 Direction2 = vec2(1, 1); 
+uniform vec2 Direction1 = vec2(1, 0);
+uniform vec2 Direction2 = vec2(1, 1);
 uniform float Speed1 = 0.08;
 uniform float Speed2 = 0.08;
 uniform sampler2D noise: repeat_enable;
@@ -21,6 +21,10 @@ uniform float heatAmplitude : hint_range(0.0, 0.15);
 uniform float heatPeriod;
 uniform float heatPhaseShift;
 uniform float heatUpperLimit : hint_range(0.5, 10.0);
+
+uniform float slant_amount : hint_range(-0.5, 0.5) = 0.2; // controls horizontal skew
+uniform float top_shrink : hint_range(0.0, 10) = 0.2; // how much top corners move inward
+
 
 vec4 get_pixelated_moving_colors(vec2 uv, vec2 direction, float speed) {
 	speed = speed / 1000.0;
@@ -59,17 +63,25 @@ vec4 smooth_extreme_colors(vec4 color) {
     } else if (is_in_threshold(color, threshold_5, 3.0)) {
         color = color5;
     }
-	
+
 	return color;
 }
 
 
 void fragment(){
-	
-	vec4 pixelated_color = .5 * get_pixelated_moving_colors(UV, Direction1, Speed1);
-	pixelated_color += .5 * get_pixelated_moving_colors(UV, Direction2, Speed2);
+	// --- APPLY ISOMETRIC SLANT ---
+	vec2 slanted_uv = UV;
+	// distance from horizontal center (0.5)
+	float center_dist = UV.x - 0.5;
+
+	// shrink factor decreases toward bottom
+	float shrink_factor = (1.0 - UV.y) * top_shrink;  // top_shrink is a new uniform
+
+	slanted_uv.x += center_dist * shrink_factor;
+	vec4 pixelated_color = .5 * get_pixelated_moving_colors(slanted_uv, Direction1, Speed1);
+	pixelated_color += .5 * get_pixelated_moving_colors(slanted_uv, Direction2, Speed2);
 	vec4 smoothed_color = smooth_extreme_colors(pixelated_color);
-	
+
 	COLOR = smoothed_color * transparency;
 
 }

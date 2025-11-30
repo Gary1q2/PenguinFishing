@@ -1,6 +1,6 @@
 extends Node2D
 
-var state = "uncast" # uncast, cast, bait_land, fish_biting, fish_on
+var state = "uncast" # uncast, cast, reeling, bait_land, fish_biting, fish_on, fish_collect
 var is_fishing
 var holding_fish = false
 
@@ -9,7 +9,14 @@ var set_hook_timer: Timer
 var fish_fight_timer: Timer
 
 var hold_progress = 0
+var hold_total = 10
 var fish_escape_time = 10
+var fish_fights_left = 0
+var fish_fight_interval = []
+var fish_fight_duration = 3
+var rod_cooldown = false
+var rod_tension_time = 1
+
 var is_holding = false
 var target_fish = null
 
@@ -17,6 +24,7 @@ var skip_next_fishing_cycle = false
 
 var auto_reel_after_cast = false
 
+@onready var inventory = get_parent().get_node("Inventory")
 
 @onready var fishing_ui: CanvasLayer = get_parent().get_node("FishingUI")
 @onready var rod_cast_sound: AudioStreamPlayer2D = $RodCastSound
@@ -62,6 +70,7 @@ func _ready():
 	land_area.connect("body_entered", Callable(bait, "_on_LandArea_body_entered"))
 	land_area.connect("body_exited", Callable(bait, "_on_LandArea_body_exited"))
 	
+	fish_sprite.connect("fish_collected", Callable(self, "_on_fish_collected"))
 	
 	bgm_music.play()
 	
@@ -81,14 +90,35 @@ func _process(delta: float) -> void:
 	is_fishing = state != "uncast"
 	update_fishing_line()
 	alert.position = Vector2(player.position.x, player.position.y - 100)
-	fish_sprite.position = Vector2(player.position.x, player.position.y -50)
+	#fish_sprite.position = Vector2(player.position.x, player.position.y -50)
 	
 	if state == "fish_on":
-		if is_holding:
+		if is_holding && rod_cooldown == false:
 			hold_progress -= delta
-			
 			if (hold_progress <= 0):
 				on_fish_fight_success()
+				
+			if false:
+				if fish_fight_interval.size() > 0:
+					
+					# Past the time
+					if fish_escape_time < fish_fight_interval[0] - fish_fight_duration:
+						fish_fight_interval.remove_at(0)
+						print("PAST THE TIME")
+						
+					# Before the time
+					elif fish_escape_time > fish_fight_interval[0]:
+						var lol = 3
+						#print("before")
+
+					# During the time
+					else:
+						rod_tension_time -= delta
+						
+						if rod_tension_time <= 0:
+							start_rod_cooldown()
+				
+			
 			
 		fish_escape_time -= delta
 	
@@ -99,8 +129,17 @@ func _process(delta: float) -> void:
 	if state == "fish_biting" || state == "fish_on":
 		if randf() * 10 < 0.8:
 			play_bait_splash()
+	elif state == "reeling":
+		if randf() * 10 < 0.4:
+			play_bait_splash()
 
-	
+func start_rod_cooldown():
+	rod_cooldown = true
+	print("rod on cooldown!")
+	await get_tree().create_timer(3.0).timeout
+	rod_cooldown = false
+	rod_tension_time = 1
+	print("rod OFF COOLDOWN")
 
 func cast_rod():
 	fish_sprite.visible = false
@@ -120,16 +159,37 @@ func uncast_rod():
 	bait.stop_bobbing()
 	stop_reel_rod_sound()
 	
+	fishing_rod.stop_shaking()
+	
 	skip_next_fishing_cycle = true
 	fishing_line.visible = false
 	
 	bait.visible = false
+
+
+func collect_fish():
+	state = "fish_collect"
+	bait.stop_bobbing()
+	stop_reel_rod_sound()
+	skip_next_fishing_cycle = true
+	bait.visible = false
+	
+	emit_stars(bait.global_position)
+	
+	inventory.catch_fish(target_fish)
+	
+
+func _on_fish_collected():
+	fishing_rod.visible = false
+	fishing_line.visible = false
+	state = "uncast"
 
 func reel_rod():
 	if state != "bait_landed":
 		return
 	
 	print("WINDING")
+	fishing_rod.adjust_shaking(0.02, 15)
 	bait.sleeping = false
 	bait.bait_state = "reeling"
 	state = "reeling"
@@ -139,6 +199,7 @@ func stop_reel_rod():
 	print("UNWINDING")
 	bait.sleeping = true
 	bait.bait_state = "in_water"
+	fishing_rod.adjust_shaking(0.02, 5)
 	state = "bait_landed"
 	rod_reel_sound.stop()
 
@@ -149,9 +210,11 @@ func stop_wind_reel_during_cast():
 
 func update_fishing_line():
 	#var rod_tip_pos = Vector2(rod_sprite.global_position.x + (40 if !rod_sprite.flip_h else -40), rod_sprite.global_position.y-45)
-	if bait.visible:
-		fishing_line.points = [rod_tip.global_position, bait.global_position]
-	
+	if fishing_rod.visible == true:
+		if bait.visible:
+			fishing_line.points = [rod_tip.global_position, bait.global_position]
+		else:
+			fishing_line.points = [rod_tip.global_position, fish_sprite.global_position]
 	
 func _on_bait_in_water():
 	play_water_splash()
@@ -166,6 +229,7 @@ func hold_action_during_cast():
 	
 func _on_bait_landed():
 	state = "bait_landed"
+	fishing_rod.start_shaking(0.02, 5)
 	
 func play_water_splash():
 	var splash = water_splash.duplicate()
@@ -191,16 +255,15 @@ func play_bait_splash():
 
 	
 func start_fishing_cycle():
-	if state != "bait_landed":
+	if !(state == "bait_landed" || state == "reeling"):
 		return
 		
 	print("Start fish cycle")
-	while state == "bait_landed" && bait.check_on_land() == false:
+	while (state == "bait_landed" || state == "reeling" ) && bait.check_on_land() == false:
 		skip_next_fishing_cycle = false
 		await get_tree().create_timer(3.0).timeout
 		
-		if state != "bait_landed" || bait.check_on_land() || skip_next_fishing_cycle == true:
-			print("on land now bye")
+		if !(state == "bait_landed" || state == "reeling") || bait.check_on_land() || skip_next_fishing_cycle == true:
 			return
 			
 		var roll = randf()
@@ -224,7 +287,7 @@ func fish_biting():
 	set_hook_timer.start()
 	
 	bait.start_bobbing(5, 14)
-	fishing_rod.start_shaking()
+	fishing_rod.start_shaking(0.1, 20)
 	fish_biting_sound.play()
 
 func set_hook():
@@ -237,9 +300,9 @@ func roll_fish():
 		"goldfish": 30,
 		"shrimp": 25,
 		"sardine": 25,
-		#"snapper": 8,
-		#"salmon": 6,
-		#"mackerel": 6
+		"snapper": 8,
+		"salmon": 6,
+		"mackerel": 6
 	}
 	
 	var total_chance = 0
@@ -264,19 +327,32 @@ func on_set_hook_success():
 	fishing_ui.reel_UI.visible = true
 	fishing_ui.fish_escape_bar.visible = true
 	fishing_ui.fish_reel_bar.visible = true
+	#fishing_ui.rod_tension_label.visible = true
 	is_holding = false
 	
 	target_fish = roll_fish()
 	if target_fish == "goldfish":
-		fish_escape_time = 10
+		fish_escape_time = 15
 		hold_progress = 5
+		#fish_fight_interval = [8]
+		#fish_fight_interval.push()
 	elif target_fish == "shrimp":
-		fish_escape_time = 8
-		hold_progress = 5
-	else:
-		fish_escape_time = 6
-		hold_progress = 5
+		fish_escape_time = 12
+		hold_progress = 6
+	elif target_fish == "sardine":
+		fish_escape_time = 10
+		hold_progress = 7
+	elif target_fish == "snapper":
+		fish_escape_time = 17
+		hold_progress = 13
+	elif target_fish == "salmon":
+		fish_escape_time = 20
+		hold_progress = 17	
+	else: #mackerel
+		fish_escape_time = 16
+		hold_progress = 14	
 		
+	fishing_ui.set_fish_reel_bar_max(hold_progress)
 	fishing_ui.set_fish_escape_bar_max(fish_escape_time)
 		
 	fish_fight_timer = Timer.new()
@@ -299,19 +375,22 @@ func _on_set_hook_timeout():
 
 func on_fish_fight_success():
 	print("U GOT DA FISH NIGGA")
-	
-	emit_stars(player.global_position + Vector2(0, -50))
-	
+
 	catch_fish_sound.play()
 	fish_fight_timer.stop()
-	uncast_rod()
 	fishing_rod.stop_shaking()
+	
+	collect_fish()
+		#uncast_rod()
+	
+	fishing_ui.show_catch_text(target_fish)
 	hold_fish_after_fishing(target_fish)
 	fish_biting_sound.stop()
 	
 	fishing_ui.reel_UI.visible = false;
 	fishing_ui.fish_escape_bar.visible = false
 	fishing_ui.fish_reel_bar.visible = false
+	fishing_ui.rod_tension_label.visible = false
 
 
 
@@ -333,7 +412,7 @@ func stop_reel_rod_sound():
 func start_wind_reel_during_game():
 	is_holding = true
 	start_reel_rod_sound()
-	fishing_rod.adjust_shaking(0.1, 32)
+	fishing_rod.adjust_shaking(0.1, 45)
 	
 func stop_wind_reel_during_game():
 	is_holding = false
@@ -344,4 +423,5 @@ func hold_fish_after_fishing(fish):
 	
 	fish_sprite.texture = load("res://Fish/" + fish + ".png")
 	
-	fish_sprite.visible = true
+	fish_sprite.fly_fish_to_player(bait.global_position)
+	#fish_sprite.visible = true

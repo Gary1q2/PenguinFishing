@@ -4,6 +4,10 @@ extends CanvasLayer
 
 @onready var fish_reel_label: Label = $FishReelTimer
 @onready var fish_escape_label: Label = $FishEscapeTimer
+@onready var rod_tension_label: Label = $RodTension
+
+@onready var fish_caught_label: Label = $FishName
+
 @onready var reel_UI: Sprite2D = $ReelUI
 
 @onready var fish_escape_bar: ProgressBar = $FishEscapeBar
@@ -31,9 +35,11 @@ func _ready() -> void:
 	fish_reel_label.text = "lala"
 	fish_reel_label.visible = false
 	fish_reel_label.global_position = Vector2(600, 500)
-	
-	var y_pos = 600
+
 	var x_pos = 350
+	var y_pos = 700
+
+	fish_caught_label.visible = false
 	
 	var viewport_size = get_viewport().size
 	print(viewport_size)
@@ -41,6 +47,9 @@ func _ready() -> void:
 	reel_UI.visible = false
 	reel_UI.global_position = Vector2(x_pos, y_pos + 100)
 	
+	rod_tension_label.text = "69"
+	rod_tension_label.visible = false
+	rod_tension_label.global_position = Vector2(x_pos + 100, y_pos - 100)
 	
 
 	fish_escape_label.text = "lala"
@@ -61,7 +70,24 @@ func _ready() -> void:
 	fish_reel_bar.max_value = 5
 	fish_reel_bar.value = 0
 	fish_reel_bar.global_position = Vector2(x_pos+100, y_pos+50)
-	
+
+func show_catch_text(fish_name: String):
+	fish_caught_label.text = "You caught a  %s!" % fish_name
+	fish_caught_label.visible = true
+
+	# Fade in and fade out using Tween
+	var tween = get_tree().create_tween()
+
+	# Fade in
+	tween.tween_property(fish_caught_label, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	# Wait 5 seconds then fade out
+	tween.tween_interval(5.0)
+	tween.tween_property(fish_caught_label, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_callback(func():
+		fish_caught_label.visible = false
+	)
+
 
 func set_fish_escape_bar_max(value):
 	fish_escape_bar.max_value = value
@@ -76,6 +102,7 @@ func _process(delta):
 
 	fish_reel_label.text = "%.2f" % fishing_con.hold_progress
 	fish_escape_label.text = "%.2f" % fishing_con.fish_escape_time
+	rod_tension_label.text = "%.2f" % fishing_con.rod_tension_time
 	
 	fish_escape_bar.value = fishing_con.fish_escape_time
 	

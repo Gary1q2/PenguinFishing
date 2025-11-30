@@ -35,7 +35,6 @@ var bob_time = 0.0
 func _ready():
 	sleeping = true
 	gravity_scale = 0
-	print(bob_group.position)
 
 func _process(delta):
 	if bait_state == "in_water" || (bait_state == "reeling" && check_on_land() == false):
@@ -76,20 +75,16 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	# Stop when it reaches the target Y
 	if bait_state == "cast":
 		if landed == false && position.y >= target_y:
-			print("landed somewhere")
 			landed = true
 			emit_signal("bait_landed")
 			if check_on_land():
 				bait_state = "rolling"
 				linear_velocity.y = 0
 				gravity_scale = 0
-				print("on land")
 				angular_velocity = 25 * (1 if facing_right else -1)
 				bait_roll_sound.play()
 			else:
 				bait_enter_water()
-				print("on water")
-		#elif landed == true:
 			
 
 	elif bait_state == "rolling" && !check_on_land():
@@ -101,7 +96,6 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		var on_land = check_on_land()	
 
 		var speed = 150
-		print(distance)
 		#if distance > 100:
 		linear_velocity = dir.normalized() * speed
 			
@@ -115,7 +109,6 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		#	print("reached player")
 		if distance < 75 || check_on_land():
 			visible = false
-			print("bai")
 			fishing_con.uncast_rod()
 			bait_state = "uncast"
 		

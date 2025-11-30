@@ -41,9 +41,12 @@ func _process(delta: float) -> void:
 		shake_timer += delta * shake_speed
 		rod_sprite.rotation = sin(shake_timer) * shake_amount
 
-func start_shaking():
+func start_shaking(amount, speed):
 	shaking = true
 	shake_timer = 0
+	
+	shake_amount = amount
+	shake_speed = speed
 	
 func stop_shaking():
 	rod_sprite.rotation = 0

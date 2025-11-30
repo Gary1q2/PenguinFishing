@@ -1,11 +1,12 @@
 [gd_scene load_steps=45 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Shader" uid="uid://b0u1rnkg4e58k" path="res://Code/Water.gdshader" id="1_fq0cl"]
-[ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Scenes/WaterTest.gdshader" id="1_jyqft"]
+[ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Code/WaterTest.gdshader" id="1_jyqft"]
 [ext_resource type="Texture2D" uid="uid://ir5im6i6yx6m" path="res://iceberg-1440x900.png" id="1_sxkr1"]
 [ext_resource type="Script" uid="uid://bxacuet2g7a6j" path="res://Code/FishingUI.gd" id="2_2w5on"]
 [ext_resource type="Texture2D" uid="uid://bnvyre82pr3up" path="res://water_texture.png" id="2_3tgeq"]
 [ext_resource type="Texture2D" uid="uid://ykcj55vkxf4o" path="res://reel-part.png" id="3_346fj"]
+[ext_resource type="Script" uid="uid://daq2l0pc2bhkd" path="res://Code/SlantSea.gd" id="3_c5snn"]
 [ext_resource type="Script" uid="uid://ddkh23mry6ajl" path="res://Code/Player.gd" id="4_0sclb"]
 [ext_resource type="Texture2D" uid="uid://deaon2hnhewve" path="res://sky.png" id="4_aht7i"]
 [ext_resource type="Texture2D" uid="uid://c74os0eikxw43" path="res://iceberg-real.png" id="5_c4ay3"]
@@ -15,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://Sounds/reel-rod.ogg" id="7_hwpts"]
 [ext_resource type="AudioStream" uid="uid://dmjowpdjrukd3" path="res://Sounds/rod-cast.ogg" id="8_erwvk"]
 [ext_resource type="AudioStream" uid="uid://bwuik2knw5r8i" path="res://Sounds/catch-fish-jingle.ogg" id="8_jyqft"]
+[ext_resource type="Script" uid="uid://s6n6w58chap4" path="res://Scenes/Inventory.gd" id="8_xvtyr"]
 [ext_resource type="AudioStream" uid="uid://cbdyek8vdpoag" path="res://Sounds/fish-biting.ogg" id="10_2w5on"]
 [ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="10_c4ay3"]
 [ext_resource type="Script" uid="uid://r1lkqjda6cd3" path="res://Code/Alert.gd" id="11_aht7i"]
@@ -28,6 +30,7 @@
 [ext_resource type="AudioStream" uid="uid://dri0kw1yhx5xv" path="res://Sounds/bait-splash.ogg" id="19_hwpts"]
 [ext_resource type="AudioStream" uid="uid://mt228vjyenek" path="res://Sounds/fishing-on-the-lake-310740.mp3" id="21_5jffn"]
 [ext_resource type="AudioStream" uid="uid://c5v7uvavx25jw" path="res://Sounds/bait-roll.ogg" id="26_kpo4j"]
+[ext_resource type="Script" uid="uid://dnx0uxqvujw0h" path="res://Code/Fish.gd" id="29_4n42c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3tgeq"]
 shader = ExtResource("1_jyqft")
@@ -48,6 +51,30 @@ shader_parameter/heatAmplitude = 0.02000000095
 shader_parameter/heatPeriod = 0.0
 shader_parameter/heatPhaseShift = 0.0
 shader_parameter/heatUpperLimit = 1.00000002375
+shader_parameter/slant_amount = 0.20900003367749995
+shader_parameter/top_shrink = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4n42c"]
+shader = ExtResource("1_jyqft")
+shader_parameter/transparency = 1.0
+shader_parameter/color0 = Color(0.88294894, 0.56022084, 0.6456264, 1)
+shader_parameter/color1 = Color(0.50096047, 0.4836613, 0.99423105, 1)
+shader_parameter/color2 = Color(0.82067764, 0.5301326, 0.7152097, 1)
+shader_parameter/color3 = Color(0.8142138, 0.34648696, 0.45145756, 1)
+shader_parameter/color4 = Color(0.71906537, 0.52992415, 0.24669564, 1)
+shader_parameter/color5 = Color(0.98467726, 0.7845336, 0.8303391, 1)
+shader_parameter/Direction1 = Vector2(1, 0)
+shader_parameter/Direction2 = Vector2(5, 1)
+shader_parameter/Speed1 = 10.0
+shader_parameter/Speed2 = 10.0
+shader_parameter/noise = ExtResource("2_3tgeq")
+shader_parameter/pixel_size = 100
+shader_parameter/heatAmplitude = 0.0
+shader_parameter/heatPeriod = 0.0
+shader_parameter/heatPhaseShift = 0.0
+shader_parameter/heatUpperLimit = 0.0
+shader_parameter/slant_amount = 0.5
+shader_parameter/top_shrink = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jyqft"]
 shader = ExtResource("1_fq0cl")
@@ -122,29 +149,26 @@ size = Vector2(50, 72)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyqft"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3pqv"]
-size = Vector2(898, 53)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sweqy"]
-size = Vector2(164, 509)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2hs0m"]
-size = Vector2(77.5, 524)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1jxqw"]
-size = Vector2(842.1875, 250)
-
 [node name="Node2D" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="TextureRect" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_3tgeq")
-offset_left = -906.0
-offset_top = -247.0
-offset_right = 893.0
-offset_bottom = 590.0
+offset_left = -719.0
+offset_top = -455.0
+offset_right = 746.0
+offset_bottom = 444.0
 texture = ExtResource("2_3tgeq")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_4n42c")
+position = Vector2(55.83191, -6.3365173)
+scale = Vector2(1.0663875, 1.0119332)
+texture = ExtResource("2_3tgeq")
+polygon = PackedVector2Array(-824, -242, -835, 513, 831, 531, 824.4357, -288.22403, -841, -307)
+script = ExtResource("3_c5snn")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 visible = false
@@ -164,9 +188,11 @@ offset_bottom = 555.0
 color = Color(0.3364876, 0.58849144, 1, 1)
 
 [node name="SkyHehe" type="Sprite2D" parent="."]
-position = Vector2(-8, -425.00003)
-scale = Vector2(2.8599489, 0.9759914)
+visible = false
+position = Vector2(44, -442)
+scale = Vector2(2.867674, 0.87454623)
 texture = ExtResource("4_aht7i")
+flip_v = true
 
 [node name="Sky" type="ColorRect" parent="."]
 visible = false
@@ -181,10 +207,29 @@ visible = false
 texture = ExtResource("1_sxkr1")
 
 [node name="IcebergTest" type="Sprite2D" parent="."]
+position = Vector2(27, 9)
 texture = ExtResource("5_c4ay3")
+
+[node name="Inventory" type="CanvasLayer" parent="."]
+script = ExtResource("8_xvtyr")
+
+[node name="Panel" type="Panel" parent="Inventory"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Inventory/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="FishingUI" type="CanvasLayer" parent="."]
 script = ExtResource("2_2w5on")
+
+[node name="RodTension" type="Label" parent="FishingUI"]
+visible = false
+offset_right = 210.0
+offset_bottom = 137.0
+theme_override_font_sizes/font_size = 100
 
 [node name="ReelUI" type="Sprite2D" parent="FishingUI"]
 z_index = 10
@@ -221,9 +266,15 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_3tgeq")
 value = 100.0
 
 [node name="FishName" type="Label" parent="FishingUI"]
-offset_right = 40.0
-offset_bottom = 31.0
-theme_override_font_sizes/font_size = 22
+offset_left = 68.0
+offset_top = 775.0
+offset_right = 1509.0
+offset_bottom = 955.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_3tgeq")
+theme_override_font_sizes/font_size = 60
+text = "You caught nothing!"
+horizontal_alignment = 1
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("4_0sclb")
@@ -377,40 +428,25 @@ shape = SubResource("RectangleShape2D_jyqft")
 
 [node name="FishSprite" type="Sprite2D" parent="."]
 texture = ExtResource("16_xvtyr")
+script = ExtResource("29_4n42c")
 
 [node name="Wall" type="StaticBody2D" parent="."]
+visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
-position = Vector2(13, -77)
-shape = SubResource("RectangleShape2D_i3pqv")
-debug_color = Color(0.83386874, 0.32519782, 0.56177956, 0.41960785)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall"]
+position = Vector2(0, -71)
+polygon = PackedVector2Array(-404, 71, -377, 51, -352, 31, -309, 29, -249, 29, -106, 28, 76, 27, 227, 35, 336, 37, 413, 38, 439, 68, 515, 148, 466, -30, -417, -39, -465, -24, -403, 89)
 
 [node name="Wall2" type="StaticBody2D" parent="."]
+visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2"]
-position = Vector2(7, 293)
-shape = SubResource("RectangleShape2D_i3pqv")
-debug_color = Color(0.7788229, 0.38453886, 0.5590459, 0.41960785)
-
-[node name="Wall3" type="StaticBody2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall3"]
-position = Vector2(493, 60)
-shape = SubResource("RectangleShape2D_sweqy")
-debug_color = Color(0.8092656, 0.35328978, 0.56258136, 0.41960785)
-
-[node name="Wall4" type="StaticBody2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
-position = Vector2(-463, 36)
-shape = SubResource("RectangleShape2D_2hs0m")
-debug_color = Color(0.81685615, 0.35205394, 0.53481096, 0.41960785)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall2"]
+polygon = PackedVector2Array(-401, 119, -388, 197, -358, 238, -270, 270, -83, 280, 146, 284, 305, 278, 418, 228, 443, 151, 442, 8, 497, 81, 477, 327, -453, 311, -469.5459, 77.616066, -402, 12)
 
 [node name="LandArea" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LandArea"]
-position = Vector2(-3.09375, 141)
-shape = SubResource("RectangleShape2D_1jxqw")
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="LandArea"]
+polygon = PackedVector2Array(-317, 11, -355, 30, -380, 61, -399, 102, -398, 158, -382, 207, -355, 238, -294, 259, -166, 280, 117, 285, 274, 282, 368, 255, 425, 221, 445, 118, 434, 62, 408, 37, 307, 36, 229, 31, 112, 20, 17, 31, -234, 32, -318, 8)
 
 [connection signal="body_entered" from="LandArea" to="Player" method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="LandArea" to="Player" method="_on_area_2d_body_exited"]
