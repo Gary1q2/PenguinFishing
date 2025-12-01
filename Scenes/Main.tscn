@@ -266,7 +266,6 @@ show_percentage = false
 offset_top = 68.0
 offset_right = 662.0
 offset_bottom = 151.0
-theme_override_fonts/font = ExtResource("7_3tgeq")
 theme_override_font_sizes/font_size = 50
 theme_override_styles/background = SubResource("StyleBoxFlat_jyqft")
 theme_override_styles/fill = SubResource("StyleBoxFlat_3tgeq")

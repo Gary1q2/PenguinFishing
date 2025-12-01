@@ -42,7 +42,6 @@ func _ready() -> void:
 	fish_caught_label.visible = false
 	
 	var viewport_size = get_viewport().size
-	print(viewport_size)
 	
 	reel_UI.visible = false
 	reel_UI.global_position = Vector2(x_pos, y_pos + 100)
