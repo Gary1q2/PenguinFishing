@@ -47,10 +47,6 @@ shader_parameter/Speed1 = 5.0
 shader_parameter/Speed2 = 5.0
 shader_parameter/noise = ExtResource("2_3tgeq")
 shader_parameter/pixel_size = 500
-shader_parameter/heatAmplitude = 0.02000000095
-shader_parameter/heatPeriod = 0.0
-shader_parameter/heatPhaseShift = 0.0
-shader_parameter/heatUpperLimit = 1.00000002375
 shader_parameter/slant_amount = 0.20900003367749995
 shader_parameter/top_shrink = 0.0
 
@@ -69,10 +65,6 @@ shader_parameter/Speed1 = 10.0
 shader_parameter/Speed2 = 10.0
 shader_parameter/noise = ExtResource("2_3tgeq")
 shader_parameter/pixel_size = 100
-shader_parameter/heatAmplitude = 0.0
-shader_parameter/heatPeriod = 0.0
-shader_parameter/heatPhaseShift = 0.0
-shader_parameter/heatUpperLimit = 0.0
 shader_parameter/slant_amount = 0.5
 shader_parameter/top_shrink = 0.0
 
