@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://cnppx6ita6to7"]
+[gd_scene load_steps=47 format=3 uid="uid://cnppx6ita6to7"]
 
 [ext_resource type="Shader" uid="uid://b0u1rnkg4e58k" path="res://Code/Water.gdshader" id="1_fq0cl"]
 [ext_resource type="Shader" uid="uid://d25ja7f81dbuc" path="res://Code/WaterTest.gdshader" id="1_jyqft"]
@@ -16,7 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://dchvingcebrye" path="res://Sounds/reel-rod.ogg" id="7_hwpts"]
 [ext_resource type="AudioStream" uid="uid://dmjowpdjrukd3" path="res://Sounds/rod-cast.ogg" id="8_erwvk"]
 [ext_resource type="AudioStream" uid="uid://bwuik2knw5r8i" path="res://Sounds/catch-fish-jingle.ogg" id="8_jyqft"]
-[ext_resource type="Script" uid="uid://s6n6w58chap4" path="res://Scenes/Inventory.gd" id="8_xvtyr"]
+[ext_resource type="Script" uid="uid://s6n6w58chap4" path="res://Code/Inventory.gd" id="8_xvtyr"]
 [ext_resource type="AudioStream" uid="uid://cbdyek8vdpoag" path="res://Sounds/fish-biting.ogg" id="10_2w5on"]
 [ext_resource type="Texture2D" uid="uid://bjtvoymy83vhf" path="res://alert.png" id="10_c4ay3"]
 [ext_resource type="Script" uid="uid://r1lkqjda6cd3" path="res://Code/Alert.gd" id="11_aht7i"]
@@ -84,6 +84,14 @@ shader_parameter/wave_amplitude = 5.0
 shader_parameter/wave_frequency = 20.0
 shader_parameter/water_color = Vector4(0.23, 0.52, 1, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xvtyr"]
+bg_color = Color(0.5507635, 0.4504931, 0.16462323, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.35899377, 0.2782324, 0.13439727, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4ay3"]
 bg_color = Color(0.29726213, 0.6625997, 0.70501643, 1)
 
@@ -144,6 +152,9 @@ _data = {
 size = Vector2(50, 72)
 
 [sub_resource type="FontVariation" id="FontVariation_sweqy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xvtyr"]
+size = Vector2(49, 81)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sxkr1"]
 
@@ -211,16 +222,20 @@ position = Vector2(27, 9)
 texture = ExtResource("5_c4ay3")
 
 [node name="Inventory" type="CanvasLayer" parent="."]
+offset = Vector2(200, 0)
+transform = Transform2D(1, 0, 0, 1, 200, 0)
 script = ExtResource("8_xvtyr")
 
 [node name="Panel" type="Panel" parent="Inventory"]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1040.0
+offset_bottom = 320.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xvtyr")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Inventory/Panel"]
+[node name="GridContainer" type="GridContainer" parent="Inventory/Panel"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+columns = 6
 
 [node name="FishingUI" type="CanvasLayer" parent="."]
 script = ExtResource("2_2w5on")
@@ -305,6 +320,12 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = SubResource("FontVariation_sweqy")
 theme_override_font_sizes/font_size = 20
 text = "Press E to fish"
+
+[node name="PushArea" type="Area2D" parent="Player"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/PushArea"]
+position = Vector2(-1.5, 3.5)
+shape = SubResource("RectangleShape2D_xvtyr")
 
 [node name="FishingController" type="Node2D" parent="."]
 script = ExtResource("6_fq0cl")
@@ -432,6 +453,8 @@ script = ExtResource("29_4n42c")
 
 [node name="Wall" type="StaticBody2D" parent="."]
 visible = false
+collision_layer = 5
+collision_mask = 5
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall"]
 position = Vector2(0, -71)
@@ -439,6 +462,8 @@ polygon = PackedVector2Array(-404, 71, -377, 51, -352, 31, -309, 29, -249, 29, -
 
 [node name="Wall2" type="StaticBody2D" parent="."]
 visible = false
+collision_layer = 5
+collision_mask = 5
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Wall2"]
 polygon = PackedVector2Array(-401, 119, -388, 197, -358, 238, -270, 270, -83, 280, 146, 284, 305, 278, 418, 228, 443, 151, 442, 8, 497, 81, 477, 327, -453, 311, -469.5459, 77.616066, -402, 12)
@@ -446,7 +471,7 @@ polygon = PackedVector2Array(-401, 119, -388, 197, -358, 238, -270, 270, -83, 28
 [node name="LandArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="LandArea"]
-polygon = PackedVector2Array(-317, 11, -355, 30, -380, 61, -399, 102, -398, 158, -382, 207, -355, 238, -294, 259, -166, 280, 117, 285, 274, 282, 368, 255, 425, 221, 445, 118, 434, 62, 408, 37, 307, 36, 229, 31, 112, 20, 17, 31, -234, 32, -318, 8)
+polygon = PackedVector2Array(-317, 11, -355, 30, -380, 61, -399, 102, -398, 158, -393, 233, -370, 264, -306, 287, -220, 305, -103.9758, 310.35907, 42, 326, 125, 317, 213, 325, 392, 307, 442, 276, 440, 191, 449, 154, 434, 62, 408, 37, 307, 36, 229, 31, 112, 20, 17, 31, -234, 32, -318, 8)
 
 [connection signal="body_entered" from="LandArea" to="Player" method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="LandArea" to="Player" method="_on_area_2d_body_exited"]

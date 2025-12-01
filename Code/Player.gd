@@ -12,6 +12,12 @@ var input: Vector2
 
 func _ready():
 	animation.play("idle")
+	$PushArea.body_entered.connect(Callable(self, "_on_fish_pushed"))
+
+func _on_fish_pushed(body):
+	if body.is_in_group("fish") and body is RigidBody2D:
+		var push_dir = (body.global_position - global_position).normalized()
+		body.apply_central_impulse(push_dir * 200)  # tweak force as needed
 
 # --- Input handling ---
 func get_input() -> Vector2:
@@ -55,15 +61,19 @@ func _physics_process(delta):
 		elif fishing_con.state == "cast":
 			fishing_con.do_not_reel_after_cast_lands()
 			
-	if Input.is_key_pressed(KEY_1):
-		if fishing_con.state == "bait_landed":
-			print('hacked a fish')
-			fishing_con.fish_biting()
+	#if Input.is_key_pressed(KEY_1):
+	#	if fishing_con.state == "bait_landed":
+	#		print('hacked a fish')
+	#		fishing_con.fish_biting()
+	#if Input.is_key_pressed(KEY_2):
+
 			
-	#if Input.is_key_pressed(KEY_0):
+	#if Input.is_action_just_pressed("hack"):
+	#	fishing_con.hack_drop_fish()
 	#	var scene = get_tree().current_scene
 	#	get_tree().change_scene_to_file(scene.filename)
 		
+
 
 #func show_fish():
 #	holding_fish = true

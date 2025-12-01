@@ -8,6 +8,8 @@ var fishing_timer: Timer
 var set_hook_timer: Timer
 var fish_fight_timer: Timer
 
+var fish_item = preload("res://Scenes/Fish.tscn")
+
 var hold_progress = 0
 var hold_total = 10
 var fish_escape_time = 10
@@ -19,6 +21,7 @@ var rod_tension_time = 1
 
 var is_holding = false
 var target_fish = null
+var held_fish = null
 
 var skip_next_fishing_cycle = false
 
@@ -152,6 +155,49 @@ func cast_rod():
 	rod_cast_sound.play()
 	
 	fishing_line.visible = true
+	
+	if held_fish != null:
+		drop_held_fish()
+	
+func hack_drop_fish():
+	held_fish = roll_fish()
+	drop_held_fish()
+	
+	
+func drop_held_fish():
+	var dropped_fish = fish_item.instantiate()
+	
+	var fish_path = "res://Fish/" + held_fish + ".png"
+	var fish_sprite = dropped_fish.get_node("Sprite2D")
+	fish_sprite.texture = load(fish_path)
+	
+	dropped_fish.position = player.global_position + Vector2(0, -16)
+	
+	dropped_fish.add_to_group('fish')
+	dropped_fish.set_freeze_enabled(false)
+	dropped_fish.gravity_scale = 1
+	dropped_fish.angular_damp = 10  # prevent wild spinning
+	#dropped_fish.friction = 1
+	#dropped_fish.bounce = 0.2
+	
+	dropped_fish.linear_velocity = Vector2(randf() * 100-50, -200)
+	get_parent().add_child(dropped_fish)
+	
+	held_fish = null
+	#var t = Timer.new()
+	#t.one_shot = true
+	#t.wait_time = 0.5  # adjust so it hits the ground
+	#t.timeout.connect(Callable(self, "_on_fish_landed"), [dropped_fish])
+	#add_child(t)
+	#t.start()
+	
+func _on_fish_landed(fish):
+	# Stop gravity but keep physics for player collisions
+	#fish.mode = RigidBody2D.MODE_RIGID # behaves like movable object
+	fish.gravity_scale = 0
+	fish.linear_velocity = Vector2.ZERO
+	fish.angular_velocity = 0
+	fish.freeze = false  # can still move if bumped
 	
 func uncast_rod():
 	fishing_rod.visible = false
@@ -297,12 +343,23 @@ func set_hook():
 
 func roll_fish():
 	var fish_table = {
-		"goldfish": 30,
-		"shrimp": 25,
-		"sardine": 25,
-		"snapper": 8,
-		"salmon": 6,
-		"mackerel": 6
+		"trash": 20,
+		"seaweed": 20,
+		"chest": 20,
+		"goldfish": 20,
+		"shrimp": 20,
+		"sardine": 20,
+		"clam": 15,
+		"crab": 15,
+		"octopus": 15,
+		"eel": 15,
+		"jellyfish": 15,
+		"snapper": 12,
+		"mackerel": 12,
+		"salmon": 12,
+		"swordfish": 5,
+		"mahimahi": 5,
+		"shark": 5
 	}
 	
 	var total_chance = 0
@@ -331,26 +388,61 @@ func on_set_hook_success():
 	is_holding = false
 	
 	target_fish = roll_fish()
-	if target_fish == "goldfish":
-		fish_escape_time = 15
+	if target_fish == "trash":
+		fish_escape_time = 10
 		hold_progress = 5
+	elif target_fish == "seaweed":
+		fish_escape_time = 9
+		hold_progress = 5
+	elif target_fish == "chest":
+		fish_escape_time = 7
+		hold_progress = 5
+	elif target_fish == "goldfish":
+		fish_escape_time = 15
+		hold_progress = 6
 		#fish_fight_interval = [8]
 		#fish_fight_interval.push()
 	elif target_fish == "shrimp":
-		fish_escape_time = 12
+		fish_escape_time = 13
 		hold_progress = 6
 	elif target_fish == "sardine":
 		fish_escape_time = 10
 		hold_progress = 7
+	elif target_fish == "clam":
+		fish_escape_time = 12
+		hold_progress = 7
+	elif target_fish == "crab":
+		fish_escape_time = 15
+		hold_progress = 10
+	elif target_fish == "octopus":
+		fish_escape_time = 13
+		hold_progress = 10
+	elif target_fish == "eel":
+		fish_escape_time = 11
+		hold_progress = 10
+	elif target_fish == "jellyfish":
+		fish_escape_time = 14
+		hold_progress = 10
 	elif target_fish == "snapper":
 		fish_escape_time = 17
 		hold_progress = 13
 	elif target_fish == "salmon":
 		fish_escape_time = 20
 		hold_progress = 17	
-	else: #mackerel
-		fish_escape_time = 16
-		hold_progress = 14	
+	elif target_fish == "mackerel":
+		fish_escape_time = 25
+		hold_progress = 20
+	elif target_fish == "swordfish":
+		fish_escape_time = 27
+		hold_progress = 25
+	elif target_fish == "mahimahi":
+		fish_escape_time = 35
+		hold_progress = 30
+	else: # shark
+		fish_escape_time = 40
+		hold_progress = 35
+
+	#hold_progress = 0
 		
 	fishing_ui.set_fish_reel_bar_max(hold_progress)
 	fishing_ui.set_fish_escape_bar_max(fish_escape_time)
@@ -421,6 +513,7 @@ func stop_wind_reel_during_game():
 	
 func hold_fish_after_fishing(fish):
 	
+	held_fish = fish
 	fish_sprite.texture = load("res://Fish/" + fish + ".png")
 	
 	fish_sprite.fly_fish_to_player(bait.global_position)
