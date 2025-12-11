@@ -51,7 +51,7 @@ func _ready():
 	for fish_name in fish_data.keys():
 		caught_fish[fish_name] = false
 
-	var grid = $Panel/GridContainer
+	var grid = $Control/Panel/GridContainer
 
 	# create a TextureRect slot for each fish
 	for fish_name in fish_data.keys():
@@ -78,7 +78,7 @@ func _ready():
 # -----------------------------
 func _input(event):
 	if event.is_action_pressed("inventory_toggle"):
-		$Panel.visible = not $Panel.visible
+		$Control/Panel.visible = not $Control/Panel.visible
 
 # -----------------------------
 # 6. Catch a fish

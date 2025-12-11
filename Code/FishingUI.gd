@@ -2,16 +2,16 @@ extends CanvasLayer
 
 @onready var  fishing_con = get_parent().get_node("FishingController")
 
-@onready var fish_reel_label: Label = $FishReelTimer
-@onready var fish_escape_label: Label = $FishEscapeTimer
-@onready var rod_tension_label: Label = $RodTension
+@onready var fish_reel_label: Label = $Control/FishReelTimer
+@onready var fish_escape_label: Label = $Control/FishEscapeTimer
+@onready var rod_tension_label: Label = $Control/RodTension
 
-@onready var fish_caught_label: Label = $FishName
+@onready var fish_caught_label: Label = $Control/FishName
 
-@onready var reel_UI: Sprite2D = $ReelUI
+@onready var reel_UI: Sprite2D = $Control/ReelUI
 
-@onready var fish_escape_bar: ProgressBar = $FishEscapeBar
-@onready var fish_reel_bar: ProgressBar = $FishReelBar
+@onready var fish_escape_bar: ProgressBar = $Control/FishEscapeBar
+@onready var fish_reel_bar: ProgressBar = $Control/FishReelBar
 
 
 
